@@ -2,4 +2,16 @@ html,
 body {
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#playground {
+    height: 100svh;
+    aspect-ratio: 1/1;
+    display: grid;
+    box-sizing: border-box;
+    border: 4px solid black;
+    grid-template-columns: repeat(100, 1fr);
+    grid-template-rows: repeat(100, 1fr);
 }
