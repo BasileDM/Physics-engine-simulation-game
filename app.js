@@ -1,7 +1,6 @@
 import { Particle } from "./scripts/classes/Particle.js";
 
 // Variables
-// let particle1 = new Particle(20, 20);
 let particles = [];
 
 // Functions
@@ -15,17 +14,37 @@ function createParticle(event) {
 
 function mainLoop() {
     for(let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].render();
+        let currentParticle = particles[i];
+        currentParticle.update();
+        currentParticle.render();
+
+        for (let j = 0; j < particles.length; j++) {
+            // i != j to avoid collision with itself
+            if (i != j) {
+                let checkedParticle = particles[j];
+
+                // Distance check from stackoverflow https://stackoverflow.com/questions/45439503/distance-function-returning-the-wrong-thing
+                let distanceX = currentParticle.positionX - checkedParticle.positionX;
+                let distanceY = currentParticle.positionY - checkedParticle.positionY;
+                let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    
+                if (distance < 10) {
+                    console.log(`${i} and ${j} are colliding.`);
+                    console.log(particles);
+                    currentParticle.velocity -= 0.15;
+                }
+            }
+        }   
+        
+        if (currentParticle.positionY > 500) {
+            currentParticle.destroy();
+            particles.splice(i, 1);
+            i--;
+        }
     }
     requestAnimationFrame(mainLoop);
 }
 
 //Main code
 document.getElementById("playground").addEventListener("click", createParticle);
-let particle1 = new Particle(50, 0);
-let particle2 = new Particle(10, 30);
-particles.push(particle1, particle2);
-particle1.spawn();
-particle2.spawn();
 requestAnimationFrame(mainLoop);

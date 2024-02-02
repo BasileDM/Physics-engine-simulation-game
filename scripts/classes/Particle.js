@@ -26,13 +26,26 @@ export class Particle {
     }
 
     update() {
-        this.velocity += 0.01;
+        this.velocity += 0.05;
         this.positionY += this.velocity;
+
+        const floor = document.getElementById("floor");
+        const floorTop = floor.getBoundingClientRect().top;
+
+        if (this.positionY + parseInt(this.height) > floorTop) {
+            this.positionY = floorTop + parseInt(this.height) - 20;
+            this.velocity = 0;
+        }
     }
 
     render() {
         let element = this.getElement();
         element.style.left = `${this.positionX}px`;
         element.style.top = `${this.positionY}px`;
+    }
+
+    destroy() {
+        let element = this.getElement();
+        element.remove();
     }
 }

@@ -7,8 +7,17 @@ body {
 }
 
 #playground {
-    height: 600px;
+    height: 500px;
     aspect-ratio: 1/1;
     box-sizing: border-box;
     border: 4px solid black;
+}
+
+#floor {
+    height: 20px;
+    width: 500px;
+    background-color: black;
+    position: absolute;
+    left: 0px;
+    bottom: 60px;
 }
