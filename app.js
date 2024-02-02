@@ -8,8 +8,8 @@ let particles = [];
 function createParticle(event) {
     let mousePositionX = event.clientX;
     let mousePositionY = event.clientY;
-    console.log({mousePositionX, mousePositionY});
     let newParticle = new Particle(mousePositionX, mousePositionY);
+    particles.push(newParticle);
     newParticle.spawn();
 }
 
@@ -23,7 +23,7 @@ function mainLoop() {
 
 //Main code
 document.getElementById("playground").addEventListener("click", createParticle);
-let particle1 = new Particle(50, 50);
+let particle1 = new Particle(50, 0);
 let particle2 = new Particle(10, 30);
 particles.push(particle1, particle2);
 particle1.spawn();
