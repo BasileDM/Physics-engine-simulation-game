@@ -1,63 +1,69 @@
-const gravity = 0.05;
+import { Vector } from "./Vector.js";
+const gravity = new Vector(0, 0.05);
 
 export class Particle {
-    constructor(positionXParam, positionYParam) {
-        this.element = document.createElement("div");
-        this.positionX = positionXParam;
-        this.positionY = positionYParam;
-        this.width = "10px"
-        this.height = "10px"
-        this.color = "red";
-        this.velocity = 0;
-        this.isColliding = false;
-    }
+   constructor(positionXParam, positionYParam) {
+      this.element = document.createElement("div");
+      this.positionVector = new Vector(positionXParam, positionYParam);
+      this.diameter = "10px";
+      this.color = "white";
+      this.velocity = new Vector(0, 0);
+      this.isColliding = false;
+      this.mass = 1;
+   }
 
-    getElement() {
-        return this.element;
-    }
+   getElement() {
+      return this.element;
+   }
 
-    setColliding(isCollidingParam) {
-        this.isColliding = isCollidingParam;
-    }
+   setColliding(isCollidingParam) {
+      this.isColliding = isCollidingParam;
+   }
 
-    spawn() {
-        let newParticle = this.element;
-        newParticle.style.position = "absolute";
-        newParticle.style.top = `${this.positionX}px`;
-        newParticle.style.left = `${this.positionY}px`;
-        newParticle.style.backgroundColor = this.color;
-        newParticle.style.width = this.width;
-        newParticle.style.height = this.height;
-        newParticle.style.border = "1px solid black";
-        newParticle.style.borderRadius = "50%";
-        document.getElementById("playground").appendChild(newParticle);
-    }
+   setColor(color) {
+      this.color = color;
+      this.element.style.backgroundColor = this.color;
+   }
 
-    update() { 
-        // If not colliding, apply gravity
-        if (!this.isColliding) {
-            this.velocity += gravity;
-            this.positionY += this.velocity;
-        }
+   spawn() {
+      let newParticle = this.element;
+      newParticle.style.position = "absolute";
+      newParticle.style.top = `${this.positionVector.x}px`;
+      newParticle.style.left = `${this.positionVector.y}px`;
+      newParticle.style.backgroundColor = this.color;
+      newParticle.style.width = this.diameter;
+      newParticle.style.height = this.diameter;
+      newParticle.style.border = "1px solid black";
+      newParticle.style.boxSizing = "border-box";
+      newParticle.style.borderRadius = "50%";
+      document.getElementById("playground").appendChild(newParticle);
+   }
 
-        const floor = document.getElementById("floor");
-        const floorTop = floor.getBoundingClientRect().top;
+   update() {
+      if (this.isColliding) {
+         this.setColor("red");
+      }
+      this.velocity = this.velocity.add(gravity);
+      this.positionVector = this.positionVector.add(this.velocity);
 
-        if (this.positionY + parseInt(this.height) > floorTop-3.5) {
-            this.positionY = floorTop + parseInt(this.height) - 23.5;
-            this.velocity = 0;
-        }
-    }
+      const floor = document.getElementById("floor");
+      const floorTop = floor.getBoundingClientRect().top;
 
-    render() {
-        let element = this.getElement();
-        element.style.left = `${this.positionX}px`;
-        element.style.top = `${this.positionY}px`;
-    }
+      if (this.positionVector.y + parseInt(this.diameter) > floorTop - 3) {
+         this.positionVector.y = floorTop - parseInt(this.diameter) - 3;
+         this.velocity = new Vector(0, - this.velocity.y + 1);
+      }
+   }
 
-    destroy() {
-        this.setColliding(false);
-        let element = this.getElement();
-        element.remove();
-    }
+   render() {
+      let element = this.getElement();
+      element.style.left = `${this.positionVector.x}px`;
+      element.style.top = `${this.positionVector.y}px`;
+   }
+
+   destroy() {
+      this.setColliding(false);
+      let element = this.getElement();
+      element.remove();
+   }
 }
