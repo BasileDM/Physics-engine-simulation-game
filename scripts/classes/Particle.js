@@ -10,6 +10,7 @@ export class Particle {
       this.velocity = new Vector(0, 0);
       this.isColliding = false;
       this.mass = 1;
+      this.frictionFactor = 0.99;
    }
 
    getElement() {
@@ -49,9 +50,10 @@ export class Particle {
       const floor = document.getElementById("floor");
       const floorTop = floor.getBoundingClientRect().top;
 
+      // Collision with floor
       if (this.positionVector.y + parseInt(this.diameter) > floorTop - 3) {
          this.positionVector.y = floorTop - parseInt(this.diameter) - 3;
-         this.velocity = new Vector(0, - this.velocity.y + 1);
+         this.velocity = new Vector(this.velocity.x*this.frictionFactor, - this.velocity.y + 0.55);
       }
    }
 
