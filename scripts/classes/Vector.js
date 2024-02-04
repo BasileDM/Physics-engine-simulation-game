@@ -5,8 +5,8 @@ export class Vector {
    }
 
    getMagnitude() {
-    let magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
-    return magnitude;
+      let magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
+      return magnitude;
    }
 
    add(otherVector) {
@@ -14,23 +14,27 @@ export class Vector {
    }
 
    substract(otherVector) {
-    return new Vector(this.x - otherVector.x, this.y - otherVector.y)
+      return new Vector(this.x - otherVector.x, this.y - otherVector.y);
+   }
+
+   multiply(value) {
+      return new Vector(this.x * value, this.y * value);
    }
 
    normalize() {
-    let magnitude = this.getMagnitude();
-    // Avoid division by 0 and return empty vector instead
-    if (magnitude === 0) {
-        return new Vector(0, 0);
-    }
-    return new Vector(this.x / magnitude, this.y / magnitude);
+      let magnitude = this.getMagnitude();
+      // Avoid division by 0 and return empty vector instead
+      if (magnitude === 0) {
+         return new Vector(0, 0);
+      }
+      return new Vector(this.x / magnitude, this.y / magnitude);
    }
 
    dot(otherVector) {
-    return this.x * otherVector.x + this.y * otherVector.y;
+      return this.x * otherVector.x + this.y * otherVector.y;
    }
 
    scale(value) {
-    return new Vector(this.x * value, this.y * value);
+      return new Vector(this.x * value, this.y * value);
    }
 }

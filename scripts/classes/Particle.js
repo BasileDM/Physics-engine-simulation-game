@@ -12,6 +12,7 @@ export class Particle {
       this.isColliding = false;
       this.mass = 1;
       this.frictionFactor = 0.99;
+      this.elasticity = 2; // 2.25 max for now or it adds more energy to the system
    }
 
    getElement() {

@@ -43,15 +43,19 @@ function mainLoop() {
                     let relativeVelocity = currentParticle.velocity.substract(checkedParticle.velocity);
                     let collisionNormal = checkedParticle.positionVector.substract(currentParticle.positionVector).normalize();
                     let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
-                    let impulse = relativeVelocityAlongNormal * 2 / (1 / currentParticle.mass + 1 / checkedParticle.mass);
+
+                    // The first math.max is used to factor in elasticity. Can be removed if not needed
+                    // I just use the biggest e of the two particles for now
+                    // Real elasticity formula is -(1+e) where 0 < e < 1
+                    let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
                     currentParticle.velocity = currentParticle.velocity.substract(collisionNormal.scale(impulse / currentParticle.mass));
                     checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
                     
                     // Solution for preventing particles from sinking into each other :
                     // Adding a separation distance along the collision normal
                     const separationDistance = 0.5;
-                    currentParticle.positionVector = currentParticle.positionVector.substract(collisionNormal.scale(separationDistance / 2));
-                    checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance / 2));
+                    currentParticle.positionVector = currentParticle.positionVector.substract(collisionNormal.scale(separationDistance));
+                    checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
 
                 }
             }
