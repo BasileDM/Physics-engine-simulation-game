@@ -2,10 +2,11 @@ import { Particle } from "./classes/Particle.js";
 
 // Variables
 let particles = []; // Array of all Particle object instances
+let frames = 0;
 
 // Functions
 function calculateDistance(currentParticle, checkedParticle) {
-    // Pythagorean distance check
+    // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive)
     // Can be refactored now that I use vectors for positioning properties
     let distanceX = currentParticle.positionVector.x - checkedParticle.positionVector.x;
     let distanceY = currentParticle.positionVector.y - checkedParticle.positionVector.y;
@@ -46,7 +47,7 @@ function mainLoop() {
 
                     // The first math.max is used to factor in elasticity. Can be removed if not needed
                     // I just use the biggest e of the two particles for now
-                    // Real elasticity formula is -(1+e) where 0 < e < 1
+                    // Real elasticity factor is -(1+e) where 0 < e < 1
                     let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
                     currentParticle.velocity = currentParticle.velocity.substract(collisionNormal.scale(impulse / currentParticle.mass));
                     checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
@@ -72,9 +73,16 @@ function mainLoop() {
         // Render the particle after all the checks
         currentParticle.render();
     }
+    frames++;
     requestAnimationFrame(mainLoop);
 }
 
 //Main code
 document.getElementById("playground").addEventListener("click", createParticle);
+
+// Basic FPS counter
+setInterval(() => {
+    document.getElementById("frameCounter").innerHTML = `${frames} <br> ${particles.length}`;
+    frames = 0;
+}, 1000);
 requestAnimationFrame(mainLoop);
