@@ -32,6 +32,7 @@ function isSphereTouchingRectangle(currentParticle, checkedParticle) {
     
 }
 
+
 function createParticle(event) {
     let mousePositionX = event.clientX;
     let mousePositionY = event.clientY;
@@ -89,7 +90,7 @@ function mainLoop() {
                         // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
                         // Vectorial math applying conservation of momentum and energy principles
                         let relativeVelocity = currentParticle.velocity.subtract(checkedParticle.velocity);
-                        let collisionNormal = currentParticle.getCollisionNormal(checkedParticle);
+                        let collisionNormal = checkedParticle.positionVector.subtract(currentParticle.positionVector).normalize();
                         let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
     
                         // The first math.max is used to factor in elasticity. Can be removed if not needed

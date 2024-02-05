@@ -38,10 +38,6 @@ export class Particle {
       this.element.style.backgroundColor = this.color;
    }
 
-   getCollisionNormal(checkedParticle) {
-      return checkedParticle.positionVector.subtract(this.positionVector).normalize();
-   }
-
    spawn() {
       let newParticle = this.element;
       newParticle.style.position = "absolute";
@@ -56,7 +52,7 @@ export class Particle {
          newParticle.style.height = this.diameter;
          newParticle.style.borderRadius = "50%";
       } else if (this.shape == "Rectangle") {
-         newParticle.style.borderRadius = "10%";
+         newParticle.style.borderRadius = "none";
          newParticle.style.width = `${this.width}px`;
          newParticle.style.height = `${this.height}px`;
       } else {
@@ -112,6 +108,7 @@ export class Block extends Particle {
    }
 
    getCollisionNormal(checkedParticle) {
+      console.log("rectangle collision");
       return new Vector(
          currentParticle.positionVector.x < checkedParticle.positionVector.x ? -1 : 1,
          currentParticle.positionVector.y < checkedParticle.positionVector.y ? -1 : 1
