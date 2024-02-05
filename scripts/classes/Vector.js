@@ -13,7 +13,7 @@ export class Vector {
       return new Vector(this.x + otherVector.x, this.y + otherVector.y);
    }
 
-   substract(otherVector) {
+   subtract(otherVector) {
       return new Vector(this.x - otherVector.x, this.y - otherVector.y);
    }
 
