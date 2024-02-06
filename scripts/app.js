@@ -10,7 +10,7 @@ let mouseDragStartY;
 
 // Functions
 function getDistanceSphereToSphere(currentParticle, checkedParticle) {
-    // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive)
+    // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive but I'll do it later)
     let distanceVector = currentParticle.positionVector.subtract(checkedParticle.positionVector);
     let combinedRadius = parseInt(currentParticle.diameter)/2 + parseInt(checkedParticle.diameter)/2;
     let distance = distanceVector.getMagnitude() - combinedRadius;
@@ -18,18 +18,17 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
 }
 
 function getDistanceBlockToSphere(blockParticle, sphereParticle) {
-    // Calculate the closest point on the rectangle to the sphere
-    let closestX = Math.max(blockParticle.positionVector.x, 
-        Math.min(sphereParticle.positionVector.x, blockParticle.positionVector.x + blockParticle.width));
-    let closestY = Math.max(blockParticle.positionVector.y, 
-        Math.min(sphereParticle.positionVector.y, blockParticle.positionVector.y + blockParticle.height));
-    
-    // Calculate the distance between the sphere and the closest point on the block
-    let distanceVector = new Vector(closestX, closestY).subtract(sphereParticle.positionVector);
-    let distance = distanceVector.getMagnitude();
+    let sphereRadius = parseInt(sphereParticle.diameter) / 2;
 
-    // Subtract the radius of the sphere to get the actual distance between surfaces
-    distance -= parseInt(sphereParticle.diameter) / 2;
+    // Calculate the closest point on the rectangle to the sphere
+    let closestX = Math.max(blockParticle.positionVector.x - sphereRadius, 
+        Math.min(sphereParticle.positionVector.x, blockParticle.positionVector.x - sphereRadius + blockParticle.width));
+    let closestY = Math.max(blockParticle.positionVector.y - sphereRadius, 
+        Math.min(sphereParticle.positionVector.y, blockParticle.positionVector.y - sphereRadius + blockParticle.height));
+    
+    // Calculate the distance between the sphere's position and the closest point on the rectangle
+    let distanceVector = new Vector(closestX, closestY).subtract(sphereParticle.positionVector);
+    let distance = distanceVector.getMagnitude() - sphereRadius;
 
     return distance;
 }
@@ -63,6 +62,10 @@ function createBlock(event) {
         Math.abs(mouseDragStartY - mouseDragEndY));
     particles.push(newBlock);
     newBlock.spawn();
+    console.log(newBlock.positionVector.x);
+    console.log(newBlock.positionVector.y);
+    console.log(newBlock.width);
+    console.log(newBlock.height);
 }
 
 function mainLoop() {
@@ -87,7 +90,7 @@ function mainLoop() {
                     distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
                 }
 
-                if (distance <= 0) {
+                if (distance <= 0 && checkedParticle.shape === "Sphere" && currentParticle.shape === "Sphere")  {
                     // console.log(`${i} and ${j} are colliding.`);
                     currentParticle.setColliding(true);
                     
@@ -109,7 +112,6 @@ function mainLoop() {
                     const separationDistance = 0.5;
                     currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
                     checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
-
                 }
             }
         }
@@ -117,7 +119,7 @@ function mainLoop() {
         currentParticle.update();
         
         // Destroy a particle if it falls below the playground area
-        if (currentParticle.positionVector.y > 3*window.innerHeight/4) {
+        if (currentParticle.positionVector.y > window.innerHeight) {
             currentParticle.destroy();
             particles.splice(i, 1);
             i--;

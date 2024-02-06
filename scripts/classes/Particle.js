@@ -1,6 +1,6 @@
 import { Vector } from "./Vector.js";
 
-const gravity = new Vector(0, 0.05);
+const gravity = new Vector(0, 0.2);
 
 export class Particle {
    constructor(
@@ -74,15 +74,31 @@ export class Particle {
       }
 
       const floor = document.getElementById("floor");
+      const leftWall = document.getElementById("left-wall");
+      const rightWall = document.getElementById("right-wall");
       const floorTop = floor.getBoundingClientRect().top;
+      const leftWallX = leftWall.getBoundingClientRect().right;
+      const rightWallX = rightWall.getBoundingClientRect().left;
 
       // Collision with floor
-      if (this.positionVector.y + parseInt(this.diameter) > floorTop - 3) {
-         this.positionVector.y = floorTop - parseInt(this.diameter) - 3;
+      if (this.positionVector.y + parseInt(this.diameter) > floorTop) {
+         this.positionVector.y = floorTop - parseInt(this.diameter);
          this.velocity = new Vector(
             this.velocity.x * this.frictionFactor,
             -this.velocity.y + 0.99
-         );
+         )
+      } else if (this.positionVector.x < leftWallX) {
+         this.positionVector.x = leftWallX;
+         this.velocity = new Vector(
+            -this.velocity.x,
+            this.velocity.y
+         )
+      } else if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
+         this.positionVector.x = rightWallX - parseInt(this.diameter);
+         this.velocity = new Vector(
+            -this.velocity.x,
+            this.velocity.y
+         )
       }
    }
 
@@ -105,13 +121,5 @@ export class Block extends Particle {
       this.width = width;
       this.height = height;
       this.color = "blue";
-   }
-
-   getCollisionNormal(checkedParticle) {
-      console.log("rectangle collision");
-      return new Vector(
-         currentParticle.positionVector.x < checkedParticle.positionVector.x ? -1 : 1,
-         currentParticle.positionVector.y < checkedParticle.positionVector.y ? -1 : 1
-       ).normalize();
    }
 }
