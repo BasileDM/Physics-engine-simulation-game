@@ -1,6 +1,6 @@
 import { Vector } from "./Vector.js";
 
-const gravity = new Vector(0, 0.2);
+const gravity = new Vector(0, 0.075);
 
 export class Particle {
    constructor(
@@ -38,6 +38,7 @@ export class Particle {
       this.element.style.backgroundColor = this.color;
    }
 
+
    spawn() {
       let newParticle = this.element;
       newParticle.style.position = "absolute";
@@ -73,27 +74,26 @@ export class Particle {
          this.positionVector = this.positionVector.add(this.velocity);
       }
 
-      const floor = document.getElementById("floor");
-      const leftWall = document.getElementById("left-wall");
-      const rightWall = document.getElementById("right-wall");
-      const floorTop = floor.getBoundingClientRect().top;
-      const leftWallX = leftWall.getBoundingClientRect().right;
-      const rightWallX = rightWall.getBoundingClientRect().left;
-
-      // Collision with floor andd walls
+      // Collisions with floor and walls
+      const floorTop = document.getElementById("floor").getBoundingClientRect().top;
+      // Floor
       if (this.positionVector.y + parseInt(this.diameter) > floorTop) {
          this.positionVector.y = floorTop - parseInt(this.diameter);
          this.velocity = new Vector(
             this.velocity.x * this.frictionFactor,
             -this.velocity.y + 0.99)
-
-      } else if (this.positionVector.x < leftWallX) {
+      }
+      // Left wall
+      const leftWallX = document.getElementById("left-wall").getBoundingClientRect().right;
+      if (this.positionVector.x < leftWallX) {
          this.positionVector.x = leftWallX;
          this.velocity = new Vector(
             -this.velocity.x,
             this.velocity.y)
-
-      } else if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
+      }
+      // Right wall
+      const rightWallX = document.getElementById("right-wall").getBoundingClientRect().left;
+      if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
          this.positionVector.x = rightWallX - parseInt(this.diameter);
          this.velocity = new Vector(
             -this.velocity.x,

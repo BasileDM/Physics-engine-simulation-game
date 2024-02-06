@@ -1,5 +1,6 @@
 import { Particle } from "./classes/Particle.js";
 import { Block } from "./classes/Particle.js";
+import { Vector } from "./classes/Vector.js";
 
 // Variables
 let particles = []; // Array of all Particle object instances
@@ -25,10 +26,14 @@ function createParticle(event) {
         mousePositionY,
         "Sphere",
         1,
-        true,
+        false,
         true);
     particles.push(newParticle);
     newParticle.spawn();
+    newParticle.element.addEventListener("keypress", function(){
+    let randomVelocity = new Vector(2, 2);
+    newParticle.velocity = randomVelocity; 
+    })
 }
 
 function startDrag(event) {
@@ -101,7 +106,6 @@ function mainLoop() {
 }
 
 //Main code
-// document.getElementById("playground").addEventListener("click", createParticle);
 document.getElementById("playground").addEventListener("mousedown", startDrag);
 document.getElementById("playground").addEventListener("mouseup", createBlock)
 document.getElementById("playground").addEventListener("wheel", createParticle)
