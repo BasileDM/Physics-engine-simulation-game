@@ -1,9 +1,9 @@
 import { Particle } from "./classes/Particle.js";
 import { Block } from "./classes/Particle.js";
-import { Vector } from "./classes/Vector.js";
 
 // Variables
 let particles = []; // Array of all Particle object instances
+let obstacles = []; 
 let frames = 0;
 let mouseDragStartX; // Might wanna use a vector here
 let mouseDragStartY;
@@ -14,22 +14,6 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     let distanceVector = currentParticle.positionVector.subtract(checkedParticle.positionVector);
     let combinedRadius = parseInt(currentParticle.diameter)/2 + parseInt(checkedParticle.diameter)/2;
     let distance = distanceVector.getMagnitude() - combinedRadius;
-    return distance;
-}
-
-function getDistanceBlockToSphere(blockParticle, sphereParticle) {
-    let sphereRadius = parseInt(sphereParticle.diameter) / 2;
-
-    // Calculate the closest point on the rectangle to the sphere
-    let closestX = Math.max(blockParticle.positionVector.x - sphereRadius, 
-        Math.min(sphereParticle.positionVector.x, blockParticle.positionVector.x - sphereRadius + blockParticle.width));
-    let closestY = Math.max(blockParticle.positionVector.y - sphereRadius, 
-        Math.min(sphereParticle.positionVector.y, blockParticle.positionVector.y - sphereRadius + blockParticle.height));
-    
-    // Calculate the distance between the sphere's position and the closest point on the rectangle
-    let distanceVector = new Vector(closestX, closestY).subtract(sphereParticle.positionVector);
-    let distance = distanceVector.getMagnitude() - sphereRadius;
-
     return distance;
 }
 
@@ -60,12 +44,10 @@ function createBlock(event) {
         Math.min(mouseDragStartY, mouseDragEndY),
         Math.abs(mouseDragStartX - mouseDragEndX),
         Math.abs(mouseDragStartY - mouseDragEndY));
-    particles.push(newBlock);
+    obstacles.push(newBlock);
     newBlock.spawn();
-    console.log(newBlock.positionVector.x);
-    console.log(newBlock.positionVector.y);
-    console.log(newBlock.width);
-    console.log(newBlock.height);
+    newBlock.update();
+    newBlock.render();
 }
 
 function mainLoop() {
@@ -74,24 +56,12 @@ function mainLoop() {
         let currentParticle = particles[i];
 
         for (let j = 0; j < particles.length; j++) {
-
             // i != j to avoid collision with itself
             if (i != j) {
                 let checkedParticle = particles[j];
-                let distance;
+                let distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
 
-                if (checkedParticle instanceof Block) {
-                    distance = getDistanceBlockToSphere(checkedParticle, currentParticle);
-                    console.log(distance);
-                } else if (currentParticle instanceof Block) { 
-                    distance = getDistanceBlockToSphere(currentParticle, checkedParticle);
-                    console.log(distance);
-                } else {
-                    distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
-                }
-
-                if (distance <= 0 && checkedParticle.shape === "Sphere" && currentParticle.shape === "Sphere")  {
-                    // console.log(`${i} and ${j} are colliding.`);
+                if (distance <= 0)  {
                     currentParticle.setColliding(true);
                     
                     // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
@@ -115,8 +85,7 @@ function mainLoop() {
                 }
             }
         }
-
-        currentParticle.update();
+        currentParticle.update(obstacles);
         
         // Destroy a particle if it falls below the playground area
         if (currentParticle.positionVector.y > window.innerHeight) {
@@ -124,7 +93,6 @@ function mainLoop() {
             particles.splice(i, 1);
             i--;
         }
-
         // Render the particle after all the checks
         currentParticle.render();
     }

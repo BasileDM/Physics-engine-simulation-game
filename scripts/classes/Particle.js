@@ -62,7 +62,7 @@ export class Particle {
       document.getElementById("playground").appendChild(newParticle);
    }
 
-   update() {
+   update(obstacles) {
       if (this.isColliding) {
          this.setColor("red");
       }
@@ -80,25 +80,24 @@ export class Particle {
       const leftWallX = leftWall.getBoundingClientRect().right;
       const rightWallX = rightWall.getBoundingClientRect().left;
 
-      // Collision with floor
+      // Collision with floor andd walls
       if (this.positionVector.y + parseInt(this.diameter) > floorTop) {
          this.positionVector.y = floorTop - parseInt(this.diameter);
          this.velocity = new Vector(
             this.velocity.x * this.frictionFactor,
-            -this.velocity.y + 0.99
-         )
+            -this.velocity.y + 0.99)
+
       } else if (this.positionVector.x < leftWallX) {
          this.positionVector.x = leftWallX;
          this.velocity = new Vector(
             -this.velocity.x,
-            this.velocity.y
-         )
+            this.velocity.y)
+
       } else if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
          this.positionVector.x = rightWallX - parseInt(this.diameter);
          this.velocity = new Vector(
             -this.velocity.x,
-            this.velocity.y
-         )
+            this.velocity.y)
       }
    }
 

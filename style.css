@@ -19,8 +19,8 @@ body {
 
 #playground {
     position: relative;
-    height: 100svh;
-    aspect-ratio: 2/1;
+    height: 100vh;
+    aspect-ratio: 1/1;
     border: none;
     box-sizing: border-box;
 }
