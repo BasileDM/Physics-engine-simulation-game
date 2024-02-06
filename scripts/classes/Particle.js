@@ -1,6 +1,6 @@
 import { Vector } from "./Vector.js";
 
-const gravity = new Vector(0, 0.2);
+const gravity = new Vector(0, 0.05);
 
 export class Particle {
    constructor(
@@ -101,7 +101,7 @@ export class Particle {
 
 export class Block extends Particle {
    constructor(positionXParam, positionYParam, width, height) {
-      super(positionXParam, positionYParam, "Rectangle", 1, true, true); // Shape, mass, hasGravity, isMovable
+      super(positionXParam, positionYParam, "Rectangle", 1, false, false); // Shape, mass, hasGravity, isMovable
       this.width = width;
       this.height = height;
       this.color = "blue";

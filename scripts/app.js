@@ -1,5 +1,6 @@
 import { Particle } from "./classes/Particle.js";
 import { Block } from "./classes/Particle.js";
+import { Vector } from "./classes/Vector.js";
 
 // Variables
 let particles = []; // Array of all Particle object instances
@@ -8,30 +9,30 @@ let mouseDragStartX; // Might wanna use a vector here
 let mouseDragStartY;
 
 // Functions
-function calculateDistanceToSphere(currentParticle, checkedParticle) {
+function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive)
-    // Can be refactored now that I use vectors for positioning properties
-    let distanceX = currentParticle.positionVector.x - checkedParticle.positionVector.x;
-    let distanceY = currentParticle.positionVector.y - checkedParticle.positionVector.y;
+    let distanceVector = currentParticle.positionVector.subtract(checkedParticle.positionVector);
     let combinedRadius = parseInt(currentParticle.diameter)/2 + parseInt(checkedParticle.diameter)/2;
-    let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY) - combinedRadius;
+    let distance = distanceVector.getMagnitude() - combinedRadius;
     return distance;
 }
 
-function isSphereTouchingRectangle(currentParticle, checkedParticle) {
-    let currentParticleRadius = parseInt(currentParticle.diameter)/2;
-
-    if (currentParticle.positionVector.x + currentParticleRadius > checkedParticle.positionVector.x &&
-        currentParticle.positionVector.x - currentParticleRadius < checkedParticle.positionVector.x + checkedParticle.width &&
-        currentParticle.positionVector.y + currentParticleRadius > checkedParticle.positionVector.y &&
-        currentParticle.positionVector.y - currentParticleRadius < checkedParticle.positionVector.y + checkedParticle.height) {
-            return 0;
-    } else {
-        return 1;
-    }
+function getDistanceBlockToSphere(blockParticle, sphereParticle) {
+    // Calculate the closest point on the rectangle to the sphere
+    let closestX = Math.max(blockParticle.positionVector.x, 
+        Math.min(sphereParticle.positionVector.x, blockParticle.positionVector.x + blockParticle.width));
+    let closestY = Math.max(blockParticle.positionVector.y, 
+        Math.min(sphereParticle.positionVector.y, blockParticle.positionVector.y + blockParticle.height));
     
-}
+    // Calculate the distance between the sphere and the closest point on the block
+    let distanceVector = new Vector(closestX, closestY).subtract(sphereParticle.positionVector);
+    let distance = distanceVector.getMagnitude();
 
+    // Subtract the radius of the sphere to get the actual distance between surfaces
+    distance -= parseInt(sphereParticle.diameter) / 2;
+
+    return distance;
+}
 
 function createParticle(event) {
     let mousePositionX = event.clientX;
@@ -69,48 +70,50 @@ function mainLoop() {
     for(let i = 0; i < particles.length; i++) {
         let currentParticle = particles[i];
 
-        // Only spherical particles will check for collisions
-        if (currentParticle.shape === "Sphere") {
-            for (let j = 0; j < particles.length; j++) {
-    
-                // i != j to avoid collision with itself
-                if (i != j) {
-                    let checkedParticle = particles[j];
-                    let distance;
-                    if (checkedParticle.shape == "Sphere") {
-                        distance = calculateDistanceToSphere(currentParticle, checkedParticle)
+        for (let j = 0; j < particles.length; j++) {
 
-                    } else if (checkedParticle.shape == "Rectangle") {
-                        distance = isSphereTouchingRectangle(currentParticle, checkedParticle)
-                    }
-                    if (distance <= 0) {
-                        // console.log(`${i} and ${j} are colliding.`);
-                        currentParticle.setColliding(true);
-                        
-                        // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
-                        // Vectorial math applying conservation of momentum and energy principles
-                        let relativeVelocity = currentParticle.velocity.subtract(checkedParticle.velocity);
-                        let collisionNormal = checkedParticle.positionVector.subtract(currentParticle.positionVector).normalize();
-                        let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
-    
-                        // The first math.max is used to factor in elasticity. Can be removed if not needed
-                        // Real elasticity factor is -(1+e) where 0 < e < 1
-                        // I just use the biggest e of the two particles for now
-                        let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
-                        currentParticle.velocity = currentParticle.velocity.subtract(collisionNormal.scale(impulse / currentParticle.mass));
-                        checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
-                        
-                        // Solution for preventing particles from sinking into each other :
-                        // Adding a separation distance along the collision normal
-                        const separationDistance = 0.5;
-                        currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
-                        checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
-    
-                    }
+            // i != j to avoid collision with itself
+            if (i != j) {
+                let checkedParticle = particles[j];
+                let distance;
+
+                if (checkedParticle instanceof Block) {
+                    distance = getDistanceBlockToSphere(checkedParticle, currentParticle);
+                    console.log(distance);
+                } else if (currentParticle instanceof Block) { 
+                    distance = getDistanceBlockToSphere(currentParticle, checkedParticle);
+                    console.log(distance);
+                } else {
+                    distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
+                }
+
+                if (distance <= 0) {
+                    // console.log(`${i} and ${j} are colliding.`);
+                    currentParticle.setColliding(true);
+                    
+                    // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
+                    // Vectorial math applying conservation of momentum and energy principles
+                    let relativeVelocity = currentParticle.velocity.subtract(checkedParticle.velocity);
+                    let collisionNormal = checkedParticle.positionVector.subtract(currentParticle.positionVector).normalize();
+                    let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
+
+                    // The first math.max is used to factor in elasticity. Can be removed if not needed
+                    // Real elasticity factor is -(1+e) where 0 < e < 1
+                    // I just use the biggest e of the two particles for now
+                    let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
+                    currentParticle.velocity = currentParticle.velocity.subtract(collisionNormal.scale(impulse / currentParticle.mass));
+                    checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
+                    
+                    // Solution for preventing particles from sinking into each other :
+                    // Adding a separation distance along the collision normal
+                    const separationDistance = 0.5;
+                    currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
+                    checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
+
                 }
             }
-
         }
+
         currentParticle.update();
         
         // Destroy a particle if it falls below the playground area
