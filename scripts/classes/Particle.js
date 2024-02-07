@@ -20,7 +20,7 @@ export class Particle {
       this.isColliding = false;
       this.mass = mass;
       this.frictionFactor = 0.99;
-      this.elasticity = 2; // 2.25 max for now or it adds more energy to the system
+      this.elasticity = 2; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       this.hasGravity = hasGravity;
       this.isMovable = isMovable;
    }
@@ -63,7 +63,7 @@ export class Particle {
       document.getElementById("playground").appendChild(newParticle);
    }
 
-   update(obstacles) {
+   update() {
       if (this.isColliding) {
          this.setColor("red");
       }
@@ -75,29 +75,50 @@ export class Particle {
       }
 
       // Collisions with floor and walls
-      const floorTop = document.getElementById("floor").getBoundingClientRect().top;
+      
+
+      // Function to calculate the impulse with each floor/wall collision normal
+      function getImpulse(collisionNormal, velocity, elasticity, mass) {
+         let relativeVelocityAlongNormal = velocity.dot(collisionNormal);
+         let impulse = elasticity * relativeVelocityAlongNormal / (1 / mass);
+         return impulse;
+      }
+
       // Floor
+      const floorTop = document.getElementById("floor").getBoundingClientRect().top;
       if (this.positionVector.y + parseInt(this.diameter) > floorTop) {
+         let collisionNormal = new Vector(0, -1); // Floor collision normal (could be a const but I want it scoped to the if block)
+         let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
+
          this.positionVector.y = floorTop - parseInt(this.diameter);
-         this.velocity = new Vector(
-            this.velocity.x * this.frictionFactor,
-            -this.velocity.y + 0.99)
+         this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
       // Left wall
       const leftWallX = document.getElementById("left-wall").getBoundingClientRect().right;
       if (this.positionVector.x < leftWallX) {
+         let collisionNormal = new Vector(1, 0); // Left wall collision normal (could be a const but I want it scoped to the if block)
+         let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
+
          this.positionVector.x = leftWallX;
-         this.velocity = new Vector(
-            -this.velocity.x,
-            this.velocity.y)
+         this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
       // Right wall
       const rightWallX = document.getElementById("right-wall").getBoundingClientRect().left;
       if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
+         let collisionNormal = new Vector(-1, 0); // Right wall collision normal (could be a const but I want it scoped to the if block)
+         let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
+
          this.positionVector.x = rightWallX - parseInt(this.diameter);
-         this.velocity = new Vector(
-            -this.velocity.x,
-            this.velocity.y)
+         this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
+      }
+      // Ceiling
+      const ceilingBot = document.getElementById("ceiling").getBoundingClientRect().bottom;
+      if (this.positionVector.y < ceilingBot) {
+         let collisionNormal = new Vector(0, 1); // Ceiling collision normal (could be a const but I want it scoped to the if block)
+         let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
+
+         this.positionVector.y = ceilingBot;
+         this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
    }
 

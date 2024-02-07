@@ -26,11 +26,11 @@ function createParticle(event) {
         mousePositionY,
         "Sphere",
         1,
-        false,
+        true,
         true);
     particles.push(newParticle);
     newParticle.spawn();
-    newParticle.element.addEventListener("keypress", function(){
+    newParticle.element.addEventListener("mouseenter", function(){
     let randomVelocity = new Vector(2, 2);
     newParticle.velocity = randomVelocity; 
     })
@@ -79,14 +79,23 @@ function mainLoop() {
                     // Real elasticity factor is -(1+e) where 0 < e < 1
                     // I just use the biggest e of the two particles for now
                     let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
-                    currentParticle.velocity = currentParticle.velocity.subtract(collisionNormal.scale(impulse / currentParticle.mass));
-                    checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
+                    // Change particles velocity according to the impulse 
+                    if (currentParticle.isMovable) {
+                        currentParticle.velocity = currentParticle.velocity.subtract(collisionNormal.scale(impulse / currentParticle.mass));
+                    }
+                    if (checkedParticle.isMovable) {
+                        checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
+                    }
                     
                     // Solution for preventing particles from sinking into each other :
                     // Adding a separation distance along the collision normal
                     const separationDistance = 0.5;
-                    currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
-                    checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
+                    if (currentParticle.isMovable) {
+                        currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
+                    }
+                    if (checkedParticle.isMovable) {
+                        checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
+                    }
                 }
             }
         }
