@@ -4,7 +4,6 @@ import { Vector } from "./classes/Vector.js";
 
 // Variables
 let particles = []; // Array of all "Particle" class instances
-let obstacles = []; 
 let frames = 0;
 let mouseDragStartX; // Might wanna use a vector here
 let mouseDragStartY;
@@ -123,7 +122,7 @@ function mainLoop() {
                 }
             }
         }
-        currentParticle.update(obstacles);
+        currentParticle.update();
         
         // Destroy a particle if it falls below the playground area
         if (currentParticle.positionVector.y > window.innerHeight) {

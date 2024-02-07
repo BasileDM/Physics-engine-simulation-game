@@ -21,7 +21,7 @@ export class Particle {
       this.isColliding = false;
       this.mass = mass;
       this.frictionFactor = 0.99;
-      this.elasticity = 1.8; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.elasticity = 1.6; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       this.hasGravity = hasGravity;
       this.isMovable = isMovable;
    }
