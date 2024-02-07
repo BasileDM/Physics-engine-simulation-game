@@ -3,6 +3,7 @@ import { gravity } from "../app.js";
 
 export class Particle {
    hasGravity;
+   
    constructor(
       positionXParam,
       positionYParam,
@@ -149,5 +150,13 @@ export class Block extends Particle {
       this.width = width;
       this.height = height;
       this.color = "blue";
+      
+      this.render();
+   }
+   render() {
+      let element = this.getElement();
+      element.style.left = `${this.positionVector.x}px`;
+      element.style.top = `${this.positionVector.y}px`;
+      element.style.zIndex = -10;
    }
 }

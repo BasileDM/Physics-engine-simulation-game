@@ -21,6 +21,17 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     let distance = distanceVector.getMagnitude() - combinedRadius;
     return distance;
 }
+function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
+    let sphereParticleRadius = parseInt(sphereParticle.diameter)/2;
+    if (sphereParticle.positionVector.x + sphereParticleRadius > rectangleParticle.positionVector.x &&
+        sphereParticle.positionVector.x - sphereParticleRadius < rectangleParticle.positionVector.x + rectangleParticle.width &&
+        sphereParticle.positionVector.y + sphereParticleRadius > rectangleParticle.positionVector.y &&
+        sphereParticle.positionVector.y - sphereParticleRadius < rectangleParticle.positionVector.y + rectangleParticle.height) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function createParticle(event) {
     let mousePositionX = event.clientX;
@@ -53,7 +64,7 @@ function createBlock(event) {
         Math.min(mouseDragStartY, mouseDragEndY),
         Math.abs(mouseDragStartX - mouseDragEndX),
         Math.abs(mouseDragStartY - mouseDragEndY));
-    obstacles.push(newBlock);
+    particles.push(newBlock);
     newBlock.spawn();
     newBlock.update();
     newBlock.render();
@@ -66,11 +77,19 @@ function mainLoop() {
 
         for (let j = 0; j < particles.length; j++) {
             // i != j to avoid collision with itself
-            if (i != j) {
+            if (i != j && currentParticle.shape != "Rectangle") {
                 let checkedParticle = particles[j];
                 let distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
+                
+                if (checkedParticle.shape == "Rectangle") {
+                    if (isSphereTouchingRectangle(currentParticle, checkedParticle)) {
+                        currentParticle.hasGravity = false;
+                    } else {
+                        currentParticle.hasGravity = true;
+                    };
+                }
 
-                if (distance <= 0)  {
+                if (distance <= 0 && checkedParticle.shape != "Rectangle")  {
                     currentParticle.setColliding(true);
                     
                     // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
@@ -80,8 +99,9 @@ function mainLoop() {
                     let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
 
                     // The first math.max is used to factor in elasticity. Can be removed if not needed
-                    // Real elasticity factor is -(1+e) where 0 < e < 1
-                    // I just use the biggest e of the two particles for now
+                    // Real elasticity(e) factor is -(1+e) where 0 < e < 1 ...
+                    // ... but I just use the biggest elasticity of the two particles for now
+                    // ... and make sure a particle elasticity is 1 < e < 2 nstead.
                     let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
                     // Change particles velocity according to the impulse 
                     if (currentParticle.isMovable) {
