@@ -3,13 +3,17 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let particles = []; // Array of all Particle object instances
+let particles = []; // Array of all "Particle" class instances
 let obstacles = []; 
 let frames = 0;
 let mouseDragStartX; // Might wanna use a vector here
 let mouseDragStartY;
 
+let gravityY = 0.2 // Used for toggle gravity
+export let gravity = new Vector(0, gravityY);
+
 // Functions
+
 function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive but I'll do it later)
     let distanceVector = currentParticle.positionVector.subtract(checkedParticle.positionVector);
@@ -115,9 +119,15 @@ function mainLoop() {
 }
 
 //Main code
+// Mouse events
 document.getElementById("playground").addEventListener("mousedown", startDrag);
 document.getElementById("playground").addEventListener("mouseup", createBlock)
 document.getElementById("playground").addEventListener("wheel", createParticle)
+
+// Button events
+document.getElementById("gravityButton").addEventListener("click", function() {
+    gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
+})
 
 // Basic FPS counter
 setInterval(() => {

@@ -1,8 +1,8 @@
 import { Vector } from "./Vector.js";
-
-const gravity = new Vector(0, 0.075);
+import { gravity } from "../app.js";
 
 export class Particle {
+   hasGravity;
    constructor(
       positionXParam,
       positionYParam,
@@ -20,7 +20,7 @@ export class Particle {
       this.isColliding = false;
       this.mass = mass;
       this.frictionFactor = 0.99;
-      this.elasticity = 2; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.elasticity = 1.8; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       this.hasGravity = hasGravity;
       this.isMovable = isMovable;
    }
@@ -36,6 +36,13 @@ export class Particle {
    setColor(color) {
       this.color = color;
       this.element.style.backgroundColor = this.color;
+   }
+
+   get hasGravity() {
+      return this.hasGravity;
+   }
+   set hasGravity(bool) {
+      this.hasGravity = bool;
    }
 
 

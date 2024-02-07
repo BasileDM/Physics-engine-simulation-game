@@ -6,6 +6,7 @@ body {
     justify-content: left;
     font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #frameCounter {
@@ -56,4 +57,18 @@ body {
     height: 20px;
     width: 100%;
     background-color: black;
+}
+
+/* Menu */
+#gravityButton {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: max-content;
+    height: max-content;
+    cursor: pointer;
+    padding: 0.5em;
+
+    &:hover {
+        background-color: rgba(128, 128, 128, 0.461);
+    }
 }
