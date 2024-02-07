@@ -74,13 +74,14 @@ export class Particle {
          this.positionVector = this.positionVector.add(this.velocity);
       }
 
-      // Collisions with floor and walls
-      
-
+      // Collisions with floor and walls :
+      //
       // Function to calculate the impulse with each floor/wall collision normal
       function getImpulse(collisionNormal, velocity, elasticity, mass) {
          let relativeVelocityAlongNormal = velocity.dot(collisionNormal);
-         let impulse = elasticity * relativeVelocityAlongNormal / (1 / mass);
+         let impulse = elasticity * relativeVelocityAlongNormal / (1 / mass); 
+         // Mass of the walls = Infinity which equates to zero, so it's not factored in here...
+         // ... compared to sphere to sphere collision calculations in the app.js
          return impulse;
       }
 
