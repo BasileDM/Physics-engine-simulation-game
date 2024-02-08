@@ -17,6 +17,10 @@ export class Vector {
       return new Vector(this.x - otherVector.x, this.y - otherVector.y);
    }
 
+   scale(value) {
+      return new Vector(this.x * value, this.y * value);
+   }
+
    normalize() {
       let magnitude = this.getMagnitude();
       // Avoid division by 0 and return empty vector instead
@@ -28,9 +32,5 @@ export class Vector {
 
    dot(otherVector) {
       return this.x * otherVector.x + this.y * otherVector.y;
-   }
-
-   scale(value) {
-      return new Vector(this.x * value, this.y * value);
    }
 }

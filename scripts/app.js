@@ -39,14 +39,13 @@ function createParticle(event) {
         mousePositionX, 
         mousePositionY,
         "Sphere",
-        1,
         true,
         true);
     particles.push(newParticle);
     newParticle.spawn();
     newParticle.element.addEventListener("mouseenter", function(){
     let randomVelocity = new Vector(2, 2);
-    newParticle.velocity = randomVelocity; 
+    newParticle.velocity = randomVelocity;
     })
 }
 
@@ -64,7 +63,6 @@ function createBlock(event) {
         Math.abs(mouseDragStartX - mouseDragEndX),
         Math.abs(mouseDragStartY - mouseDragEndY));
     particles.push(newBlock);
-    console.log(newBlock);
     newBlock.spawn();
     newBlock.update();
     newBlock.render();

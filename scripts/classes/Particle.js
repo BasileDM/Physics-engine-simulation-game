@@ -8,20 +8,31 @@ export class Particle {
       positionXParam,
       positionYParam,
       shape,
-      mass,
       hasGravity,
       isMovable
    ) {
       this.element = document.createElement("div");
-      this.shape = shape;
       this.positionVector = new Vector(positionXParam, positionYParam);
-      this.diameter = "30px";
+      this.shape = shape;
       this.color = "white";
+
+      this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
+
+      this.diameter = "23px";
+      this.radius = parseInt(this.diameter)/2;
+      this.area = Math.PI * this.radius * this.radius;
+
+      this.elasticity = 1.7; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.density = 1000; // mass units per area (akin to kg/m^3) 
+      this.mass = this.density * this.area;
+
+      // Equation for quadratic drag force : 
+      // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
+      this.dragCoef = 0.47;
+      this.dragForce = 0.5 * this.dragCoef * this.area * 1.225 * this.velocity.dot(this.velocity);
+      
       this.isColliding = false;
-      this.mass = mass;
-      this.frictionFactor = 0.99;
-      this.elasticity = 1.6; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       this.hasGravity = hasGravity;
       this.isMovable = isMovable;
    }
@@ -76,6 +87,11 @@ export class Particle {
          this.setColor("red");
       }
       if (this.hasGravity) {
+         let dragForceDirection = new Vector (-this.velocity.normalize().x, -this.velocity.normalize().y);
+         console.log(dragForceDirection);
+         console.log(`Dot : ${this.velocity.dot(this.velocity)}`); // Calculate magnitude first -----------
+         let dragForceVector = dragForceDirection.scale(this.dragForce);
+         let net_force = gravity + this.dragForce
          this.velocity = this.velocity.add(gravity);
       }
       if (this.isMovable) {
