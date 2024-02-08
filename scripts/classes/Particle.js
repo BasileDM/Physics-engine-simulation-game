@@ -1,6 +1,7 @@
 import { Vector } from "./Vector.js";
 import { gravity } from "../app.js";
 import { atmosphericPressure } from "../app.js";
+import { airDensity } from "../app.js";
 
 export class Particle {
    hasGravity;
@@ -20,19 +21,19 @@ export class Particle {
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
-      this.diameter = "30px";
+      this.diameter = "40px";
       this.radius = parseInt(this.diameter)/2;
       this.area = Math.PI * this.radius * this.radius;
 
-      this.elasticity = 1.7; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
-      this.density = 1; // mass units per area (akin to kg/m^3) Default 1000 = water
+      this.elasticity = 2; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.density = 8; // mass units per area (akin to kg/m^3) Default 1000 = water
       this.mass = this.density * this.area;
 
       // Equation for quadratic drag force : 
       // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
-      this.dragCoef = 0.47; // Default is 0.47 for real life value
+      this.dragCoef = 0.2; // Default is 0.47 for real life value
       // 1.225 is the density of air
-      this.dragForce = 0.5 * this.dragCoef * this.area * 1.225 * Math.pow(this.velocity.getMagnitude(), 2);
+      this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
       
       this.isColliding = false;
       this.hasGravity = hasGravity;
@@ -100,9 +101,7 @@ export class Particle {
       if (this.hasGravity) {
          // Scale gravity to the mass of the object
          let gravityForce = gravity.scale(this.mass);
-         let buoyantForce = gravity.scale(-atmosphericPressure);
-         console.log(gravityForce);
-         console.log(buoyantForce);
+         let buoyantForce = gravity.scale(-atmosphericPressure / this.density);
          net_force = gravityForce.add(dragForceVector).add(buoyantForce);
          // net_force = gravity.add(dragForceVector); // No gravity scaling to the mass
          // this.velocity = this.velocity.add(gravity); // OLD basic velocity addition

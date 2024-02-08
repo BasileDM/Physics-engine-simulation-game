@@ -3,9 +3,10 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let gravityY = 0.001 // Used for toggle gravity
+let gravityY = 0.002 // Used for toggle gravity
 export let gravity = new Vector(0, gravityY);
 export const atmosphericPressure = 865;
+export const airDensity = 1.225;
 
 let frames = 0;
 let frameTime = 0;
@@ -47,7 +48,7 @@ function createParticle(event) {
     particles.push(newParticle);
     newParticle.spawn();
     newParticle.element.addEventListener("mouseenter", function(){
-    let randomVelocity = new Vector(-0.2, -0.6);
+    let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-5);
     newParticle.velocity = randomVelocity;
     })
 }
@@ -114,7 +115,7 @@ function mainLoop() {
                     
                     // Solution for preventing particles from sinking into each other :
                     // Adding a separation distance along the collision normal
-                    const separationDistance = 0.5;
+                    const separationDistance = 0.01;
                     if (currentParticle.isMovable) {
                         currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
                     }
