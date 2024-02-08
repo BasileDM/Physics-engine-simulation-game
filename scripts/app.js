@@ -3,13 +3,15 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let particles = []; // Array of all "Particle" class instances
+let gravityY = 100 // Used for toggle gravity
+export let gravity = new Vector(0, gravityY);
+
 let frames = 0;
+let frameTime = 0;
+
+let particles = []; // Array of all "Particle" class instances
 let mouseDragStartX; // Might wanna use a vector here
 let mouseDragStartY;
-
-let gravityY = 0.2 // Used for toggle gravity
-export let gravity = new Vector(0, gravityY);
 
 // Functions
 

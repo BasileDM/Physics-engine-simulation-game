@@ -19,7 +19,7 @@ export class Particle {
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
-      this.diameter = "23px";
+      this.diameter = "63px";
       this.radius = parseInt(this.diameter)/2;
       this.area = Math.PI * this.radius * this.radius;
 
@@ -30,7 +30,7 @@ export class Particle {
       // Equation for quadratic drag force : 
       // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
       this.dragCoef = 0.47;
-      this.dragForce = 0.5 * this.dragCoef * this.area * 1.225 * this.velocity.dot(this.velocity);
+      this.dragForce = 0.5 * this.dragCoef * this.area * 1.225 * Math.pow(this.velocity.getMagnitude(), 2);
       
       this.isColliding = false;
       this.hasGravity = hasGravity;
@@ -83,19 +83,33 @@ export class Particle {
    }
 
    update() {
+      let scaledVelocity;
+      // Update drag force according to current velocity
+      this.dragForce =  0.5 * this.dragCoef * this.area * 1.225 * Math.pow(this.velocity.getMagnitude(), 2);
+
       if (this.isColliding) {
          this.setColor("red");
       }
       if (this.hasGravity) {
+         // dragForceDirection is the opposite of the current direction (normalized velocity)
          let dragForceDirection = new Vector (-this.velocity.normalize().x, -this.velocity.normalize().y);
-         console.log(dragForceDirection);
-         console.log(`Dot : ${this.velocity.dot(this.velocity)}`); // Calculate magnitude first -----------
          let dragForceVector = dragForceDirection.scale(this.dragForce);
-         let net_force = gravity + this.dragForce
-         this.velocity = this.velocity.add(gravity);
+         console.log("Drag Force vector : ");
+         console.log(dragForceVector);
+         let net_force = gravity.add(dragForceVector);
+         console.log("Net force : ");
+         console.log(net_force);
+         this.acceleration = new Vector (net_force.x / this.mass, net_force.y / this.mass);
+         console.log("accel : ");
+         console.log(this.acceleration);
+         let scaledAcceleration = this.acceleration.scale(16); // 16ms per frame for 60 FPS, I will get the real frameTime later
+         this.velocity = this.velocity.add(scaledAcceleration);
+         scaledVelocity = this.velocity.scale(16);
+         // this.velocity = this.velocity.add(gravity); // OLD basic velocity addition
       }
       if (this.isMovable) {
-         this.positionVector = this.positionVector.add(this.velocity);
+         // this.positionVector = this.positionVector.add(this.velocity); // OLD basic add velocity to position
+         this.positionVector = this.positionVector.add(scaledVelocity);
       }
 
       // Collisions with floor and walls :
