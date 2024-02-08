@@ -1,7 +1,9 @@
 import { Vector } from "./Vector.js";
+
 import { gravity } from "../app.js";
 import { atmosphericPressure } from "../app.js";
 import { airDensity } from "../app.js";
+import { frameTime } from "../app.js";
 
 export class Particle {
    hasGravity;
@@ -21,18 +23,17 @@ export class Particle {
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
-      this.diameter = "40px";
+      this.diameter = "50px";
       this.radius = parseInt(this.diameter)/2;
       this.area = Math.PI * this.radius * this.radius;
 
-      this.elasticity = 2; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
-      this.density = 8; // mass units per area (akin to kg/m^3) Default 1000 = water
+      this.elasticity = 1.7; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.density = 1000; // Default 1000 = water (mass units per area (akin to kg/m^3)) 
       this.mass = this.density * this.area;
 
       // Equation for quadratic drag force : 
       // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
-      this.dragCoef = 0.2; // Default is 0.47 for real life value
-      // 1.225 is the density of air
+      this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
       this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
       
       this.isColliding = false;
@@ -88,7 +89,7 @@ export class Particle {
    update() {
       let scaledVelocity = new Vector(0, 0);
       // Update drag force according to current velocity
-      this.dragForce =  0.5 * this.dragCoef * this.area * 1.225 * Math.pow(this.velocity.getMagnitude(), 2);
+      this.dragForce =  0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
       // dragForceDirection is the opposite of the current direction (normalized velocity)
       let dragForceDirection = this.velocity.normalize().scale(-1);
       // Make drag force a vector with the raw force * normalized direction
@@ -110,9 +111,9 @@ export class Particle {
       }
 
       this.acceleration = new Vector (net_force.x / this.mass, net_force.y / this.mass);
-      let scaledAcceleration = this.acceleration.scale(16); // 16ms per frame for 60 FPS, I will get the real frameTime later
+      let scaledAcceleration = this.acceleration.scale(frameTime); // frametime is 16,6ms per frame for 60 FPS, around 6-7 for 144 FPS
       this.velocity = this.velocity.add(scaledAcceleration);
-      scaledVelocity = this.velocity.scale(16);
+      scaledVelocity = this.velocity.scale(frameTime);
 
       if (this.isMovable) {
          // this.positionVector = this.positionVector.add(this.velocity); // OLD basic add velocity to position

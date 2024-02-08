@@ -3,13 +3,13 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let gravityY = 0.002 // Used for toggle gravity
+let gravityY = 0.002 // Default : 0.002 Used for toggle gravity
 export let gravity = new Vector(0, gravityY);
-export const atmosphericPressure = 865;
-export const airDensity = 1.225;
+export const atmosphericPressure = 1000; // Default : 1000
+export const airDensity = 1.225; // Default : 1.225
 
 let frames = 0;
-let frameTime = 0;
+export let frameTime = 0; // 1000ms divided by frames per second
 
 let particles = []; // Array of all "Particle" class instances
 let mouseDragStartX; // Might wanna use a vector here
@@ -115,7 +115,7 @@ function mainLoop() {
                     
                     // Solution for preventing particles from sinking into each other :
                     // Adding a separation distance along the collision normal
-                    const separationDistance = 0.01;
+                    const separationDistance = 0.5;
                     if (currentParticle.isMovable) {
                         currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
                     }
@@ -154,6 +154,7 @@ document.getElementById("gravityButton").addEventListener("click", function() {
 // Basic FPS counter
 setInterval(() => {
     document.getElementById("frameCounter").innerHTML = `${frames} <br> ${particles.length}`;
+    frameTime = 1000/frames;
     frames = 0;
 }, 1000);
 requestAnimationFrame(mainLoop);
