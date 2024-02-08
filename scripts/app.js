@@ -23,9 +23,9 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
 function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
     let sphereParticleRadius = parseInt(sphereParticle.diameter)/2;
     if (sphereParticle.positionVector.x + sphereParticleRadius > rectangleParticle.positionVector.x &&
-        sphereParticle.positionVector.x - sphereParticleRadius < rectangleParticle.positionVector.x + rectangleParticle.width &&
+        sphereParticle.positionVector.x + sphereParticleRadius < rectangleParticle.positionVector.x + rectangleParticle.width &&
         sphereParticle.positionVector.y + sphereParticleRadius > rectangleParticle.positionVector.y &&
-        sphereParticle.positionVector.y - sphereParticleRadius < rectangleParticle.positionVector.y + rectangleParticle.height) {
+        sphereParticle.positionVector.y + sphereParticleRadius < rectangleParticle.positionVector.y + rectangleParticle.height) {
         return true;
     } else {
         return false;
@@ -64,6 +64,7 @@ function createBlock(event) {
         Math.abs(mouseDragStartX - mouseDragEndX),
         Math.abs(mouseDragStartY - mouseDragEndY));
     particles.push(newBlock);
+    console.log(newBlock);
     newBlock.spawn();
     newBlock.update();
     newBlock.render();
