@@ -3,7 +3,7 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let gravityY = 0.0018 // Default : 0.002 Used for toggle gravity
+let gravityY = 0.002 // Default : 0.002 Used for toggle gravity
 export let gravity = new Vector(0, gravityY);
 export const airDensity = 1.225 / 1000000; // Default : 1.225 (/1000000 to convert to kg/cm^3)
 
@@ -142,17 +142,22 @@ function mainLoop() {
     requestAnimationFrame(mainLoop);
 }
 
-// Main code
+// // # Main code
 //
-// Mouse events
+// // Mouse events
 document.getElementById("playground").addEventListener("mousedown", startDrag);
 document.getElementById("playground").addEventListener("mouseup", createBlock)
 document.getElementById("playground").addEventListener("wheel", createParticle)
 
-// Button events
+// // Button events
 document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
+// Modal window for tutorial
+const dialog = document.querySelector("dialog");
+document.querySelector("#tutorial").addEventListener("click", () => {dialog.showModal()});
+document.querySelector("dialog button").addEventListener("click", () => {dialog.close()});
+
 
 // FPS, frametime, and entities counter
 setInterval(() => {
