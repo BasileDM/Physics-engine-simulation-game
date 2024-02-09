@@ -49,7 +49,7 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         
         // Solution for preventing particles from sinking into each other :
         // Adding a separation distance along the collision normal
-        const separationDistance = 0.5;
+        const separationDistance = 0.8;
         if (currentParticle.isMovable) {
             currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
         }
@@ -79,6 +79,11 @@ function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
     }
 }
 
+let hasGravity = true;
+let isMovable = true;
+let diameter = "30px";
+let elasticity = 1.95;
+let density = 1000;
 function createParticle(event) {
     let mousePositionX = event.clientX;
     let mousePositionY = event.clientY;
@@ -86,8 +91,11 @@ function createParticle(event) {
         mousePositionX, 
         mousePositionY,
         "Sphere",
-        true,
-        true);
+        hasGravity,
+        isMovable,
+        diameter,
+        elasticity,
+        density);
     particles.push(newParticle);
     newParticle.spawn();
     console.log(newParticle);
@@ -150,9 +158,29 @@ document.getElementById("playground").addEventListener("mouseup", createBlock)
 document.getElementById("playground").addEventListener("wheel", createParticle)
 
 // // Button events
+// Gravity toggle
 document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
+
+// // Tools
+// Particle tool
+let particleToolButton = document.getElementById("particleCreatorButton");
+let particleTool = document.getElementById("particleTool");
+particleToolButton.addEventListener("click", function() {
+    particleTool.style.visibility == "hidden" ? 
+    particleTool.style.visibility = "visible" : 
+    particleTool.style.visibility = "hidden";
+})
+ 
+document.getElementById("particleToolApply").addEventListener("click", function() {
+    diameter = `${document.getElementById("size").value}px`;
+    elasticity = document.getElementById("elasticity").value;
+    density = document.getElementById("density").value;
+})
+
+
+// Fullscreen button
 let isFullscreen = false;
 let fullscreenButton = document.getElementById("fullscreen");
 fullscreenButton.addEventListener("click", function() {

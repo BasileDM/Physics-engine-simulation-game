@@ -20,7 +20,19 @@
         <div id="ceiling"></div>
     </div>
     <div class="menu">
-        <div id="gravityButton" class="button"><p>Toggle gravity</p></div>
+        <div class="subMenuContainer">
+            <div id="gravityButton" class="button"><p>Toggle gravity</p></div>
+        </div>
+        <div class="subMenuContainer">
+            <div class="button" id="particleCreatorButton">Particle creator</div>
+            <div class="button">Zones</div>
+        </div>
+        <div id="particleTool" class="subMenuContainer">
+            <label for="size">Size : </label><input type="number" id="size" value="35">
+            <label for="elasticity">Elasticity : </label><input type="number" id="elasticity" value="1.75">
+            <label for="density">Density : </label><input type="number" id="density" value="1000">
+            <div id="particleToolApply" class="button">Apply</div>
+        </div>
         <dialog>
             <button id="closeButton">X</button>
             <h2>Guide</h2>

@@ -12,7 +12,10 @@ export class Particle {
       positionYParam,
       shape,
       hasGravity,
-      isMovable
+      isMovable,
+      diameter,
+      elasticity,
+      density
    ) {
       this.element = document.createElement("div");
       this.positionVector = new Vector(positionXParam, positionYParam);
@@ -22,14 +25,14 @@ export class Particle {
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
-      this.elasticity = 1.5; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.elasticity = elasticity; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       
-      this.diameter = "30px"; // 1px = 1 Centimeter
+      this.diameter = diameter; // 1px = 1 Centimeter
       this.radius = parseInt(this.diameter)/2; // Cm
       this.area = Math.PI * this.radius * this.radius; // Cm²
 
       this.volume = (4/3) * Math.PI * Math.pow(this.radius, 3); // in cubic centimeters (cm^3)
-      this.density = 1000; // Default 1000kg/m^3 (density of water)
+      this.density = density; // Default 1000kg/m^3 (density of water)
       this.densityInKgPerCm3 = this.density / 1000000;
       this.mass = this.densityInKgPerCm3 * this.volume; // in kilograms
 
