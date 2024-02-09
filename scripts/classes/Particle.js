@@ -24,7 +24,7 @@ export class Particle {
 
       this.elasticity = 1.5; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
       
-      this.diameter = "200px"; // 1px = 1 Centimeter
+      this.diameter = "30px"; // 1px = 1 Centimeter
       this.radius = parseInt(this.diameter)/2; // Cm
       this.area = Math.PI * this.radius * this.radius; // Cm²
 
@@ -72,6 +72,7 @@ export class Particle {
       newParticle.style.backgroundColor = this.color;
       newParticle.style.border = "1px solid black";
       newParticle.style.boxSizing = "border-box";
+      newParticle.style.zIndex = "10";
 
       if (this.shape == "Sphere") {
          newParticle.style.width = this.diameter;
@@ -197,6 +198,6 @@ export class Block extends Particle {
       let element = this.getElement();
       element.style.left = `${this.positionVector.x}px`;
       element.style.top = `${this.positionVector.y}px`;
-      element.style.zIndex = -10;
+      element.style.zIndex = 0;
    }
 }

@@ -7,6 +7,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
 }
 
 #frameCounter {
@@ -17,6 +18,9 @@ body {
     color: green;
     font-weight: bold;
     font-size: 20px;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid white;
 }
 
 #playground {
@@ -25,12 +29,13 @@ body {
     aspect-ratio: 1/1;
     border: none;
     box-sizing: border-box;
+    background-color: white;
 }
 
 #floor {
     height: 20px;
     width: 100%;
-    background-color: black;
+    background-color: rgb(67, 67, 67);
     position: absolute;
     left: 0;
     bottom: 0;
@@ -41,7 +46,7 @@ body {
     top: 0;
     width: 20px;
     height: 100%;
-    background-color: black;
+    background-color: rgb(67, 67, 67);
 }
 #right-wall {
     position: absolute;
@@ -49,7 +54,7 @@ body {
     top: 0;
     width: 20px;
     height: 100%;
-    background-color: black;
+    background-color: rgb(67, 67, 67);
 }
 #ceiling {
     position: absolute;
@@ -57,20 +62,25 @@ body {
     top: 0;
     height: 20px;
     width: 100%;
-    background-color: black;
+    background-color: rgb(67, 67, 67);
 }
 
 /* Menu */
-#gravityButton {
+.button {
     border: 1px solid black;
     border-radius: 10px;
     width: max-content;
-    height: max-content;
     cursor: pointer;
     padding: 0.5em;
+    margin : 20px;
+    box-shadow: 2px 2px 3px rgba(255, 255, 255, 0.349);
+    background-color: white;
 
     &:hover {
-        background-color: rgba(128, 128, 128, 0.461);
+        background-color: rgba(208, 206, 206, 0.791);
+    }
+    p {
+        margin: 0;
     }
 }
 
@@ -88,5 +98,6 @@ body {
         text-wrap: nowrap;
         width: 190px;
         margin: 0;
+        color: white;
     }
 }
