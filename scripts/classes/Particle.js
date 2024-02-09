@@ -1,7 +1,6 @@
 import { Vector } from "./Vector.js";
 
 import { gravity } from "../app.js";
-import { atmosphericPressure } from "../app.js";
 import { airDensity } from "../app.js";
 import { frameTime } from "../app.js";
 
@@ -102,7 +101,7 @@ export class Particle {
       if (this.hasGravity) {
          // Scale gravity to the mass of the object
          let gravityForce = gravity.scale(this.mass);
-         let buoyantForce = gravity.scale(-atmosphericPressure / this.density);
+         let buoyantForce = gravity.scale(-this.area*airDensity);
          net_force = gravityForce.add(dragForceVector).add(buoyantForce);
          // net_force = gravity.add(dragForceVector); // No gravity scaling to the mass
          // this.velocity = this.velocity.add(gravity); // OLD basic velocity addition
@@ -111,7 +110,7 @@ export class Particle {
       }
 
       this.acceleration = new Vector (net_force.x / this.mass, net_force.y / this.mass);
-      let scaledAcceleration = this.acceleration.scale(frameTime); // frametime is 16,6ms per frame for 60 FPS, around 6-7 for 144 FPS
+      let scaledAcceleration = this.acceleration.scale(frameTime); // frametime is 16,6ms per frame for 60 FPS, around 7 for 144 FPS
       this.velocity = this.velocity.add(scaledAcceleration);
       scaledVelocity = this.velocity.scale(frameTime);
 

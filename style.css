@@ -12,10 +12,11 @@ body {
 #frameCounter {
     position: fixed;
     right : 0;
-    color: green;
-    font-weight: bold;
     z-index: 10;
     display: block;
+    color: green;
+    font-weight: bold;
+    font-size: 20px;
 }
 
 #playground {
