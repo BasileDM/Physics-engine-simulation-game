@@ -7,7 +7,10 @@
     <title>Physics sandbox</title>
 </head>
 <body>
-    <div id="frameCounter"></div>
+    <div id="sideMenu">
+        <div id="frameCounter"></div>
+        <div id="fullscreen" class="button"><p>Go fullscreen</p></div>
+    </div>
     <div id="playground">
         <div id="floor"></div>
         <div id="left-wall"></div>
@@ -25,10 +28,12 @@
                 <li>Scroll wheel to spawn balls</li>
                 <li>Click and drag to draw an anti-gravity zone <br> (only the last one that's drawn works for now)</li>
                 <li>Hover over balls to give them an upwards push</li>
+                <li>Get info about particles in the console</li>
                 <li><a href="https://github.com/BasileDM/Physics-engine-simulation-game" target="_blank">Github repository</a></li>
             </ul>
         </dialog>
         <div id="tutorial"></div>
+        
     </div>
     <script src="scripts/app.js" type="module"></script>
 </body>

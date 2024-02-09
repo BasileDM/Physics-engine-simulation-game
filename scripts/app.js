@@ -153,6 +153,20 @@ document.getElementById("playground").addEventListener("wheel", createParticle)
 document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
+let isFullscreen = false;
+let fullscreenButton = document.getElementById("fullscreen");
+fullscreenButton.addEventListener("click", function() {
+    if (!isFullscreen) {
+        document.body.requestFullscreen();
+        isFullscreen = true;
+        fullscreenButton.textContent = "Exit fullscreen"
+    } else {
+        document.exitFullscreen();
+        isFullscreen = false;
+        fullscreenButton.textContent = "Go fullscreen"
+    }
+})
+
 // Modal window for tutorial
 const dialog = document.querySelector("dialog");
 document.querySelector("#tutorial").addEventListener("click", () => {dialog.showModal()});
