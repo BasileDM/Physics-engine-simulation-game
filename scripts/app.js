@@ -3,9 +3,9 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let gravityY = 0.002 // Default : 0.002 Used for toggle gravity
+let gravityY = 0.0018 // Default : 0.002 Used for toggle gravity
 export let gravity = new Vector(0, gravityY);
-export const airDensity = 1.225; // Default : 1.225
+export const airDensity = 1.225 / 1000000; // Default : 1.225 (/1000000 to convert to kg/cm^3)
 
 let frames = 0;
 export let frameTime = 0; // 1000ms divided by frames per second
@@ -14,6 +14,7 @@ let particles = []; // Array of all "Particle" class instances
 let mouseDragStart = new Vector(0, 0);
 
 // Functions
+//
 function getCollisionResponse(currentParticle, checkedParticle) {
     let distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
                 
@@ -37,7 +38,6 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         // The first math.max is used to factor in elasticity. Can be removed if not needed.
         // Real elasticity(e) factor is -(1+e) where 0 < e < 1 ...
         // ... but I just use the biggest elasticity of the two particles for now
-        // ... and make sure a particle elasticity is 1 < e < 2 nstead.
         let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
         // Change particles velocity according to the impulse 
         if (currentParticle.isMovable) {
@@ -66,6 +66,7 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     let distance = distanceVector.getMagnitude() - combinedRadius;
     return distance;
 }
+
 function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
     let sphereParticleRadius = parseInt(sphereParticle.diameter)/2;
     if (sphereParticle.positionVector.x + sphereParticleRadius > rectangleParticle.positionVector.x &&
@@ -89,9 +90,10 @@ function createParticle(event) {
         true);
     particles.push(newParticle);
     newParticle.spawn();
+    console.log(newParticle);
     newParticle.element.addEventListener("mouseenter", function(){
-    let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-5);
-    newParticle.velocity = randomVelocity;
+        let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-5);
+        newParticle.velocity = randomVelocity;
     })
 }
 
@@ -113,11 +115,13 @@ function createBlock(event) {
 }
 
 function mainLoop() {
+
     // Iterating through all the particles to update and render them
     for(let i = 0; i < particles.length; i++) {
         let currentParticle = particles[i];
 
         for (let j = 0; j < particles.length; j++) {
+
             // i != j to avoid collision with itself
             if (i != j && currentParticle.shape != "Rectangle") {
                 let checkedParticle = particles[j];
@@ -132,14 +136,14 @@ function mainLoop() {
             particles.splice(i, 1);
             i--;
         }
-        // Render the particle after all the checks
         currentParticle.render();
     }
     frames++;
     requestAnimationFrame(mainLoop);
 }
 
-//Main code
+// Main code
+//
 // Mouse events
 document.getElementById("playground").addEventListener("mousedown", startDrag);
 document.getElementById("playground").addEventListener("mouseup", createBlock)
@@ -150,10 +154,12 @@ document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
 
-// Basic FPS counter
+// FPS, frametime, and entities counter
 setInterval(() => {
     frameTime = 1000/frames;
     document.getElementById("frameCounter").innerHTML = `${frames} fps <br>${Math.round(frameTime*100)/100} ms <br>${particles.length} entities`;
     frames = 0;
 }, 1000);
+
+// Main loop initialization
 requestAnimationFrame(mainLoop);

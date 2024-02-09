@@ -73,3 +73,20 @@ body {
         background-color: rgba(128, 128, 128, 0.461);
     }
 }
+
+#scale {
+    width: 20px;
+    height: 5px;
+    position: absolute;
+    bottom: 220px;
+    background-color: red;
+    z-index: 10;
+    p {
+        position: absolute;
+        top: -7px;
+        left: 25px;
+        text-wrap: nowrap;
+        width: 190px;
+        margin: 0;
+    }
+}

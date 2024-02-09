@@ -22,13 +22,16 @@ export class Particle {
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
-      this.diameter = "50px";
-      this.radius = parseInt(this.diameter)/2;
-      this.area = Math.PI * this.radius * this.radius;
+      this.elasticity = 1.5; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      
+      this.diameter = "200px"; // 1px = 1 Centimeter
+      this.radius = parseInt(this.diameter)/2; // Cm
+      this.area = Math.PI * this.radius * this.radius; // Cm²
 
-      this.elasticity = 1.7; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
-      this.density = 1000; // Default 1000 = water (mass units per area (akin to kg/m^3)) 
-      this.mass = this.density * this.area;
+      this.volume = (4/3) * Math.PI * Math.pow(this.radius, 3); // in cubic centimeters (cm^3)
+      this.density = 1000; // Default 1000kg/m^3 (density of water)
+      this.densityInKgPerCm3 = this.density / 1000000;
+      this.mass = this.densityInKgPerCm3 * this.volume; // in kilograms
 
       // Equation for quadratic drag force : 
       // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
@@ -101,7 +104,7 @@ export class Particle {
       if (this.hasGravity) {
          // Scale gravity to the mass of the object
          let gravityForce = gravity.scale(this.mass);
-         let buoyantForce = gravity.scale(-this.area*airDensity);
+         let buoyantForce = gravity.scale(-this.volume*airDensity);
          net_force = gravityForce.add(dragForceVector).add(buoyantForce);
          // net_force = gravity.add(dragForceVector); // No gravity scaling to the mass
          // this.velocity = this.velocity.add(gravity); // OLD basic velocity addition
