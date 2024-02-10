@@ -5,7 +5,7 @@ import { Vector } from "./classes/Vector.js";
 // Variables
 let gravityY = 0.002 // Default : 0.002 Used for toggle gravity
 export let gravity = new Vector(0, gravityY);
-export const airDensity = 1.225 / 1000000; // Default : 1.225 (/1000000 to convert to kg/cm^3)
+export let airDensity = 1.225 / 1000000; // Default : 1.225 (/1000000 to convert to kg/cm^3)
 
 let frames = 0;
 export let frameTime = 0; // 1000ms divided by frames per second
@@ -105,7 +105,7 @@ function createParticle(event) {
     newParticle.spawn();
     console.log(newParticle);
     newParticle.element.addEventListener("mouseenter", function(){
-        let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-5);
+        let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
         newParticle.velocity = randomVelocity;
     })
 }
@@ -171,10 +171,11 @@ document.getElementById("playground").addEventListener("wheel", createParticle)
 document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
+// Global variables apply button
 document.getElementById("variablesApplyButton").addEventListener("click", function() {
     gravityY = 0.002 * document.getElementById("gravityFactor").value;
     gravity = new Vector(0, gravityY);
-    console.log(gravityY);
+    airDensity =  parseFloat(document.getElementById("airDensity").value) / 1000000;
 })
 
 // // Tools
@@ -191,6 +192,8 @@ document.getElementById("particleToolApply").addEventListener("click", function(
     diameter = `${document.getElementById("size").value}px`;
     elasticity = parseFloat(document.getElementById("elasticity").value);
     density = document.getElementById("density").value;
+    isMovable = document.getElementById("isMovable").checked;
+    hasGravity = document.getElementById("hasGravity").checked;
 })
 
 
