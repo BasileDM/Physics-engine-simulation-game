@@ -75,7 +75,6 @@ body {
 }
 /* #endregion */
 
-/* #region Right side menus */
 /* #region Buttons and tools */
 .menu {
     label {
@@ -104,19 +103,24 @@ body {
 
 /* Frame counter */
 #sideMenu {
+    background-color: black;
     position: fixed;
-    right : 0;
+    left : 100vh;
+    bottom: 0;
     z-index: 10;
     display: block;
     color: green;
     font-weight: bold;
     font-size: 20px;
     padding: 10px;
-    border: 1px solid white;
     .button {
         font-size: 16px;
         margin: 10px;
     }
+}
+
+#clearPlayground {
+    color: red;
 }
 
 .button {

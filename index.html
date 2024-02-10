@@ -11,6 +11,8 @@
     <div id="sideMenu">
         <div id="frameCounter"></div>
         <div id="fullscreen" class="button"><p>Go fullscreen</p></div>
+        
+        <div id="clearPlayground" class="button">Clear playground</div>
     </div>
 
     <div id="playground">
@@ -49,21 +51,23 @@
         <div id="particleTool" class="subMenuContainer">
             <div>
                 <h2>Custom particle : </h2>
-                <label for="size">Size : </label>
+                <label for="size">Size (cm) : </label>
                 <input type="number" id="size" value="30" min="1" max="970" step="10" onchange="
                     if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
                     if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
+                    document.getElementById('mass').value = (4/3) * Math.PI * Math.pow((parseInt(this.value)/2), 3) * (parseFloat(document.getElementById('density').value)/ 1000000);
                 ">
-                <label for="elasticity">Elasticity : </label>
-                <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
-                <output>0.50</output>
-                <label for="density">Density : </label>
+                <label for="density">Density (kg/m³) : </label>
                 <input type="number" id="density" value="1000" min="0.1" max="22590"onchange="
                     if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
                     if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-                ">
+                "><label for="mass">Mass (kg) : </label>
+                <input type="number" id="mass" value="0" disabled>
+                <label for="elasticity">Elasticity : </label>
+                <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
+                <output>0.50</output>
                 <label for="isMovable">Is movable : </label>
-                <input type="checkbox" id="isMovable" checked>
+                <input type="checkbox" id="isMovable" checked disabled>
                 <label for="hasGravity">Has gravity : </label>
                 <input type="checkbox" id="hasGravity" checked>
 

@@ -178,6 +178,14 @@ document.getElementById("variablesApplyButton").addEventListener("click", functi
     airDensity =  parseFloat(document.getElementById("airDensity").value) / 1000000;
 })
 
+// Clear button
+document.getElementById("clearPlayground").addEventListener("click", function() {
+    for (let particle of particles) {
+        particle.destroy();
+    }
+    particles = [];
+})
+
 // // Tools
 // Particle tool
 let particleToolButton = document.getElementById("particleCreatorButton");
