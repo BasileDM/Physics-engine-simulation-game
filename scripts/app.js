@@ -49,7 +49,7 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         
         // Solution for preventing particles from sinking into each other :
         // Adding a separation distance along the collision normal
-        const separationDistance = 0.8;
+        const separationDistance = 1;
         if (currentParticle.isMovable) {
             currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
         }
@@ -60,9 +60,12 @@ function getCollisionResponse(currentParticle, checkedParticle) {
 }
 
 function getDistanceSphereToSphere(currentParticle, checkedParticle) {
+    let currentParticleCenter = currentParticle.positionVector.add(new Vector(currentParticle.radius, currentParticle.radius));
+    let checkedParticleCenter = checkedParticle.positionVector.add(new Vector(checkedParticle.radius, checkedParticle.radius));
+
     // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive but I'll do it later)
-    let distanceVector = currentParticle.positionVector.subtract(checkedParticle.positionVector);
-    let combinedRadius = parseInt(currentParticle.diameter)/2 + parseInt(checkedParticle.diameter)/2;
+    let distanceVector = currentParticleCenter.subtract(checkedParticleCenter);
+    let combinedRadius = currentParticle.radius + checkedParticle.radius;
     let distance = distanceVector.getMagnitude() - combinedRadius;
     return distance;
 }
@@ -82,7 +85,7 @@ function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
 let hasGravity = true;
 let isMovable = true;
 let diameter = "30px";
-let elasticity = 1.95;
+let elasticity = 1.4;
 let density = 1000;
 function createParticle(event) {
     let mousePositionX = event.clientX;
