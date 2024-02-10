@@ -39,10 +39,8 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         let collisionNormal = checkedParticleCenter.subtract(currentParticleCenter).normalize();
         let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
 
-        // The first math.max is used to factor in elasticity. Can be removed if not needed.
-        // Real elasticity(e) factor is -(1+e) where 0 < e < 1 ...
-        // ... but I just use the biggest elasticity of the two particles for now
-        let impulse = (Math.max(currentParticle.elasticity, checkedParticle.elasticity)) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
+        // Elasticity (e) factor is (1+e) where 0 < e < 1
+        let impulse = (1 + currentParticle.elasticity) * relativeVelocityAlongNormal / (1 / currentParticle.mass + 1 / checkedParticle.mass);
         // Change particles velocity according to the impulse 
         if (currentParticle.isMovable) {
             currentParticle.velocity = currentParticle.velocity.subtract(collisionNormal.scale(impulse / currentParticle.mass));
@@ -89,7 +87,7 @@ function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
 let hasGravity = true;
 let isMovable = true;
 let diameter = "30px";
-let elasticity = 1.4;
+let elasticity = 0.5;
 let density = 1000;
 function createParticle(event) {
     let mousePositionX = event.clientX;
@@ -173,6 +171,11 @@ document.getElementById("playground").addEventListener("wheel", createParticle)
 document.getElementById("gravityButton").addEventListener("click", function() {
     gravity.getMagnitude() == 0 ? gravity.y = gravityY : gravity.y = 0;
 })
+document.getElementById("variablesApplyButton").addEventListener("click", function() {
+    gravityY = 0.002 * document.getElementById("gravityFactor").value;
+    gravity = new Vector(0, gravityY);
+    console.log(gravityY);
+})
 
 // // Tools
 // Particle tool
@@ -186,7 +189,7 @@ particleToolButton.addEventListener("click", function() {
  
 document.getElementById("particleToolApply").addEventListener("click", function() {
     diameter = `${document.getElementById("size").value}px`;
-    elasticity = document.getElementById("elasticity").value;
+    elasticity = parseFloat(document.getElementById("elasticity").value);
     density = document.getElementById("density").value;
 })
 
