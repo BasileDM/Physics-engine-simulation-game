@@ -122,7 +122,6 @@ export class Particle {
       scaledVelocity = this.velocity.scale(frameTime);
 
       if (this.isMovable) {
-         // this.positionVector = this.positionVector.add(this.velocity); // OLD basic add velocity to position
          this.positionVector = this.positionVector.add(scaledVelocity);
       }
 

@@ -11,6 +11,7 @@ let frames = 0;
 export let frameTime = 0; // 1000ms divided by frames per second
 
 let particles = []; // Array of all "Particle" class instances
+let hasDragStarted = false;
 let mouseDragStart = new Vector(0, 0);
 
 // Functions
@@ -29,10 +30,13 @@ function getCollisionResponse(currentParticle, checkedParticle) {
     if (distance <= 0 && checkedParticle.shape != "Rectangle")  {
         currentParticle.setColliding(true);
         
+        let currentParticleCenter = currentParticle.positionVector.add(new Vector(currentParticle.radius, currentParticle.radius));
+        let checkedParticleCenter = checkedParticle.positionVector.add(new Vector(checkedParticle.radius, checkedParticle.radius));
+        
         // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
         // Vectorial math applying conservation of momentum and energy principles
         let relativeVelocity = currentParticle.velocity.subtract(checkedParticle.velocity);
-        let collisionNormal = checkedParticle.positionVector.subtract(currentParticle.positionVector).normalize();
+        let collisionNormal = checkedParticleCenter.subtract(currentParticleCenter).normalize();
         let relativeVelocityAlongNormal = relativeVelocity.dot(collisionNormal);
 
         // The first math.max is used to factor in elasticity. Can be removed if not needed.
@@ -49,12 +53,12 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         
         // Solution for preventing particles from sinking into each other :
         // Adding a separation distance along the collision normal
-        const separationDistance = 1;
+        const separationDistance = 0.5;
         if (currentParticle.isMovable) {
-            currentParticle.positionVector = currentParticle.positionVector.subtract(collisionNormal.scale(separationDistance));
+            currentParticle.positionVector = currentParticleCenter.subtract(collisionNormal.scale(separationDistance * Math.abs(distance))).subtract(new Vector(currentParticle.radius, currentParticle.radius));
         }
         if (checkedParticle.isMovable) {
-            checkedParticle.positionVector = checkedParticle.positionVector.add(collisionNormal.scale(separationDistance));
+            checkedParticle.positionVector = checkedParticleCenter.add(collisionNormal.scale(separationDistance * Math.abs(distance))).subtract(new Vector(checkedParticle.radius, checkedParticle.radius));
         }
     }
 }
@@ -109,20 +113,24 @@ function createParticle(event) {
 }
 
 function startDrag(event) {
+    hasDragStarted = true;
     mouseDragStart = new Vector(event.clientX, event.clientY);
 }
 
 function createBlock(event) {
-    let mouseDragEnd = new Vector(event.clientX, event.clientY);
-    let newBlock = new Block(
-        Math.min(mouseDragStart.x, mouseDragEnd.x),
-        Math.min(mouseDragStart.y, mouseDragEnd.y),
-        Math.abs(mouseDragStart.x - mouseDragEnd.x),
-        Math.abs(mouseDragStart.y - mouseDragEnd.y));
-    particles.push(newBlock);
-    newBlock.spawn();
-    newBlock.update();
-    newBlock.render();
+    if (hasDragStarted) {
+        let mouseDragEnd = new Vector(event.clientX, event.clientY);
+        let newBlock = new Block(
+            Math.min(mouseDragStart.x, mouseDragEnd.x),
+            Math.min(mouseDragStart.y, mouseDragEnd.y),
+            Math.abs(mouseDragStart.x - mouseDragEnd.x),
+            Math.abs(mouseDragStart.y - mouseDragEnd.y));
+        particles.push(newBlock);
+        newBlock.spawn();
+        newBlock.update();
+        newBlock.render();
+    }
+    hasDragStarted = false;
 }
 
 function mainLoop() {
