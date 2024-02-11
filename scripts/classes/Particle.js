@@ -4,63 +4,65 @@ import { gravity } from "../app.js";
 import { airDensity } from "../app.js";
 import { frameTime } from "../app.js";
 
-export class Particle {
-   hasGravity;
+export class Entity {
+   #hasGravity;
+   #isMovable;
+   #element;
+   #color;
+   #density;
    
    constructor(
       positionVector,
       shape,
       hasGravity = true,
       isMovable = true,
-      diameter = "30px",
-      elasticity = 0.5,
       density = 1000,
       color = "red"
    ) {
-      this.element = document.createElement("div");
+      this.#element = document.createElement("div");
       this.positionVector = positionVector;
       this.shape = shape;
-      this.color = color;
-      this.border = `${elasticity * 6}px solid #70008F`;
-
-      this.acceleration = new Vector(0, 0);
-      this.velocity = new Vector(0, 0);
-
-      this.elasticity = elasticity; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.#color = color;
       
-      this.diameter = diameter; // 1px = 1 Centimeter
-      this.radius = parseInt(this.diameter)/2; // Cm
-      this.area = Math.PI * this.radius * this.radius; // Cm²
-
-      this.volume = (4/3) * Math.PI * Math.pow(this.radius, 3); // in cubic centimeters (cm^3)
-      this.density = density; // Default 1000kg/m^3 (density of water)
-      this.densityInKgPerCm3 = this.density / 1000000;
-      this.mass = this.densityInKgPerCm3 * this.volume; // in kilograms
-
-      // Equation for quadratic drag force : 
-      // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
-      this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
-      this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
+      this.#density = density; // Default 1000kg/m^3 (density of water)
       
-      this.hasGravity = hasGravity;
-      this.isMovable = isMovable;
+      this.#hasGravity = hasGravity;
+      this.#isMovable = isMovable;
    }
 
-   getElement() {
-      return this.element;
+   //#region Getters and Setters
+   get element() {
+      return this.#element;
    }
-
-   setColor(color) {
-      this.color = color;
-      this.element.style.backgroundColor = this.color;
+   set element(element) {
+      this.#element = element;
    }
-
+   get color() {
+      return this.#color;
+   }
+   set color(color) {
+      this.#color = color;
+      this.#element.style.backgroundColor = this.#color;
+   }
+   get density() {
+      return this.#density;
+   }
+   set density(density) {
+      this.#density = density;
+   }
    get hasGravity() {
-      return this.hasGravity;
+      return this.#hasGravity;
    }
    set hasGravity(bool) {
-      this.hasGravity = bool;
+      this.#hasGravity = bool;
    }
+   get isMovable() {
+      return this.#isMovable;
+   }
+   set isMovable(isMovable) {
+      this.#isMovable = isMovable;
+   }
+   //#endregion
 
    spawn() {
       let newParticle = this.element;
@@ -85,6 +87,82 @@ export class Particle {
       }
 
       document.getElementById("playground").appendChild(newParticle);
+   }
+
+   render() {
+      let element = this.element;
+      element.style.left = `${this.positionVector.x}px`;
+      element.style.top = `${this.positionVector.y}px`;
+   }
+
+   destroy() {
+      let element = this.element;
+      element.remove();
+   }
+}
+
+export class Particle extends Entity {
+   #diameter;
+   #radius;
+   #elasticity;
+   #mass;
+   constructor(
+      positionVector, 
+      shape, 
+      hasGravity, 
+      isMovable, 
+      diameter = "30px", 
+      elasticity = 0.5, 
+      density, 
+      color
+   ){
+      super(positionVector, shape, hasGravity, isMovable, density, color)
+      this.acceleration = new Vector(0, 0);
+      this.velocity = new Vector(0, 0);
+
+      this.#elasticity = elasticity; // 2 max for now or it adds more energy to the system and 1 min for no elasticity
+      this.border = `${elasticity * 6}px solid #70008F`;
+
+      this.#diameter = diameter; // 1px = 1 Centimeter
+      this.#radius = parseInt(this.diameter)/2; // Cm
+      this.area = Math.PI * this.radius * this.radius; // Cm²
+
+      this.volume = (4/3) * Math.PI * Math.pow(this.radius, 3); // in cubic centimeters (cm^3)
+      
+      this.densityInKgPerCm3 = this.density / 1000000;
+      this.#mass = this.densityInKgPerCm3 * this.volume; // in kilograms
+
+      // Equation for quadratic drag force : 
+      // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
+      this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
+      this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
+      
+      this.spawn();
+   }
+   
+   get diameter() {
+      return this.#diameter;
+   }
+   set diameter(diameter) {
+      this.#diameter = diameter;
+   }
+   get radius() {
+      return this.#radius;
+   }
+   set radius(radius) {
+      this.#radius = radius;
+   }
+   get elasticity() {
+      return this.#elasticity;
+   }
+   set elasticity(elasticity) {
+      this.#elasticity = elasticity;
+   }
+   get mass() {
+      return this.#mass;
+   }
+   set mass(mass) {
+      this.#mass = mass;
    }
 
    update() {
@@ -165,30 +243,33 @@ export class Particle {
          this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
    }
-
-   render() {
-      let element = this.getElement();
-      element.style.left = `${this.positionVector.x}px`;
-      element.style.top = `${this.positionVector.y}px`;
-   }
-
-   destroy() {
-      let element = this.getElement();
-      element.remove();
-   }
 }
 
-export class Block extends Particle {
+export class Zone extends Entity {
+   #width;
+   #height;
    constructor(positionVector, width, height) {
-      super(positionVector, "Rectangle", 1, false, false); // Shape, mass, hasGravity, isMovable
-      this.width = width;
-      this.height = height;
-      this.color = "blue";
+      super(positionVector, "Rectangle", false, false, 500, "blue");
+      this.#width = width;
+      this.#height = height;
       this.render();
    }
 
+   get width() {
+      return this.#width;
+   }
+   set width(width) {
+      this.#width = width;
+   }
+   get height() {
+      return this.#height;
+   }
+   set height(height) {
+      this.#height = height;
+   }
+
    render() {
-      let element = this.getElement();
+      let element = this.element;
       element.style.left = `${this.positionVector.x}px`;
       element.style.top = `${this.positionVector.y}px`;
       element.style.zIndex = 0;

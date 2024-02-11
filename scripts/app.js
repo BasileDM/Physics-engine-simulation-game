@@ -1,5 +1,5 @@
 import { Particle } from "./classes/Particle.js";
-import { Block } from "./classes/Particle.js";
+import { Zone } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
@@ -88,7 +88,6 @@ let diameter;
 let elasticity;
 let density;
 let color;
-let borderColor;
 function createParticle(event) {
     let mousePositionVector = new Vector (event.clientX, event.clientY);
     let newParticle = new Particle(
@@ -101,8 +100,8 @@ function createParticle(event) {
         density,
         color);
     particles.push(newParticle);
-    newParticle.spawn();
-    console.log(newParticle);
+
+    // Mouse push on hover
     newParticle.element.addEventListener("mouseenter", function(){
         let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
         newParticle.velocity = randomVelocity;
@@ -114,24 +113,23 @@ function startDrag(event) {
     mouseDragStart = new Vector(event.clientX, event.clientY);
 }
 
-function createBlock(event) {
+function createZone(event) {
     if (hasDragStarted) {
         let mouseDragEnd = new Vector(event.clientX, event.clientY);
-        let newBlock = new Block(
+        let newZone = new Zone(
             new Vector (Math.min(mouseDragStart.x, mouseDragEnd.x), Math.min(mouseDragStart.y, mouseDragEnd.y)),
             Math.abs(mouseDragStart.x - mouseDragEnd.x),
             Math.abs(mouseDragStart.y - mouseDragEnd.y)
         );
-        particles.push(newBlock);
-        newBlock.spawn();
-        newBlock.update();
-        newBlock.render();
+        particles.push(newZone);
+        newZone.spawn();
+        newZone.render();
+        console.log(newZone);
     }
     hasDragStarted = false;
 }
 
 function mainLoop() {
-
     // Iterating through all the particles to update and render them
     for(let i = 0; i < particles.length; i++) {
         let currentParticle = particles[i];
@@ -144,7 +142,9 @@ function mainLoop() {
                 getCollisionResponse(currentParticle, checkedParticle);
             }
         }
-        currentParticle.update();
+        if (currentParticle instanceof Particle) {
+            currentParticle.update();
+        }
         
         // Destroy a particle if it falls below the playground area
         if (currentParticle.positionVector.y > window.innerHeight) {
@@ -162,7 +162,7 @@ function mainLoop() {
 //
 // // Mouse events
 document.getElementById("playground").addEventListener("mousedown", startDrag);
-document.getElementById("playground").addEventListener("mouseup", createBlock);
+document.getElementById("playground").addEventListener("mouseup", createZone);
 document.getElementById("playground").addEventListener("wheel", createParticle);
 
 // // Button events
