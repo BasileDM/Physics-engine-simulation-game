@@ -89,7 +89,7 @@ let diameter = "30px";
 let elasticity = 0.5;
 let density = 1000;
 let color = "red";
-let borderColor = `${elasticity * 10}px solid #70008F`
+let borderColor = `${elasticity * 6}px solid #70008F`
 function createParticle(event) {
     let mousePositionX = event.clientX;
     let mousePositionY = event.clientY;
