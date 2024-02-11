@@ -222,6 +222,7 @@ materialList.forEach(function (material) {
         document.getElementById(`material${material.Name}`).style.backgroundColor = `${material.Color}`;
         document.getElementById("density").value = material.Density;
         document.getElementById("insideColor").value = material.Color;
+        document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById("size").value)/2), 3) * (parseFloat(material.Density)/ 1000000)) * 1000) / 1000;
     });
 });
 
