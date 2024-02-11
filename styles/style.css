@@ -152,13 +152,12 @@ input[type='range'], input[type="checkbox"] {
     border: 1px solid black;
     border-radius: 0px;
     width: auto;
+    max-height: 1.1em;
     cursor: pointer;
     padding: 0.5em;
-    margin: 0.8em 0.8em 0.8em auto;
     box-shadow: 2px 2px 3px rgba(255, 255, 255, 0.349);
     background-color: white;
-    align-self: self-end;
-
+    margin: 0;
     &:hover {
         background-color: rgba(208, 206, 206, 0.791);
     }
@@ -173,6 +172,8 @@ input[type='range'], input[type="checkbox"] {
     border-radius: 20px;
     box-shadow: none;
     padding: 10px 20px;
+    margin: 0.8em 0.8em 0.8em auto;
+    align-self: self-end;
     &:hover {
         background-color: rgb(0, 72, 0);
     }
