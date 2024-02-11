@@ -9,9 +9,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: black;
     color: black;
-    output {
-        color: white;
-    }
 }
 
 input[type='range'], input[type="checkbox"] {
@@ -85,12 +82,30 @@ input[type='range'], input[type="checkbox"] {
 
 /* #region Buttons and tools */
 .menu {
+    margin: 1.4em;
     label {
         padding: 5px;
         color: white;
     }
     input {
-        max-height: 20px;;
+        margin-top: auto;
+        margin-bottom: auto;
+        max-height: 28px;
+        font-size: 18px;
+    }
+    input[type="checkbox"] {
+        margin: 5px;
+    }
+    label, output {
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    output {
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        min-width: 30px;
+        text-align: center;
     }
 }
 
@@ -100,6 +115,7 @@ input[type='range'], input[type="checkbox"] {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    padding: 5px;
     h2 {
         color: white;
     }
@@ -135,12 +151,13 @@ input[type='range'], input[type="checkbox"] {
 .button {
     border: 1px solid black;
     border-radius: 0px;
-    width: max-content;
+    width: auto;
     cursor: pointer;
     padding: 0.5em;
-    margin : 20px;
+    margin: 0.8em 0.8em 0.8em auto;
     box-shadow: 2px 2px 3px rgba(255, 255, 255, 0.349);
     background-color: white;
+    align-self: self-end;
 
     &:hover {
         background-color: rgba(208, 206, 206, 0.791);
@@ -212,8 +229,6 @@ dialog {
     background-image: linear-gradient(
       -45deg,
       rgb(228, 228, 228),
-      rgba(26, 129, 0, 0.372),
-      rgba(7, 85, 0, 0.43),
       rgb(0, 0, 0)
       
     );
