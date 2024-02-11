@@ -1,121 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/materials.css">
-    <title>Physics sandbox</title>
-</head>
-<body>
-
-    <div id="sideMenu">
-        <div id="frameCounter"></div>
-        <div id="fullscreen" class="button"><p>Go fullscreen</p></div>
-        
-        <div id="clearPlayground" class="button">Clear playground</div>
-    </div>
-
-    <div id="playground">
-        <div id="floor"></div>
-        <div id="left-wall"></div>
-        <div id="right-wall">
-            <div id="scale"><p>2 meters</p></div>
-        </div>
-        <div id="ceiling"></div>
-    </div>
-
-    <!-- Edit and tools menu -->
-    <div class="menu">
-        <!-- Global variables modification menu -->
-        <div class="subMenuContainer">
-            <div id="gravityButton" class="button"><p>Toggle gravity</p></div>
-            <label for="gravityFactor">Gravity factor : </label>
-            <input type="range"  id="gravityFactor" value="1" min="0" max="10" step="0.1" oninput="this.nextElementSibling.value = this.value;">
-            <output>1</output>
-            <label for="airDensity">Air density : </label>
-            <input type="number" id="airDensity" value="1.225" min="0" onchange="
-                if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
-                if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-            ">
-
-            <div id="variablesApplyButton" class="button apply">Apply</div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles/style.css">
+        <link rel="stylesheet" href="styles/materials.css">
+        <title>Particle physics sandbox</title>
+    </head>
+    <body>
+        <div id="sideMenu">
+            <div id="frameCounter"></div>
+            <div id="fullscreen" class="button"><p>Go fullscreen</p></div>
+            
+            <div id="clearPlayground" class="button">Clear playground</div>
         </div>
 
-        <!-- Tool selection menu -->
-        <div class="subMenuContainer">
-            <div class="button" id="particleCreatorButton">Particle creator</div>
-            <div class="button">Zones</div>
+        <div id="playground">
+            <div id="floor"></div>
+            <div id="left-wall"></div>
+            <div id="right-wall">
+                <div id="scale"><p>2 meters</p></div>
+            </div>
+            <div id="ceiling"></div>
         </div>
-        
-        <!-- Custom particle creation tool -->
-        <div id="particleTool" class="subMenuContainer">
-            <!-- Variables and sliders-->
-            <div class="menuColumn">
-                <h2>Custom particle</h2>
-                <label for="size">Diameter (cm) : </label>
-                <input type="number" id="size" value="30" min="1" max="970" step="10" onchange="
+
+        <!-- Edit and tools menu -->
+        <div class="menu">
+
+            <!-- Global variables modification menu -->
+            <div class="subMenuContainer">
+                <div id="gravityButton" class="button"><p>Toggle gravity</p></div>
+                <label for="gravityFactor">Gravity factor : </label>
+                <input type="range"  id="gravityFactor" value="1" min="0" max="10" step="0.1" oninput="this.nextElementSibling.value = this.value;">
+                <output>1</output>
+                <label for="airDensity">Air density : </label>
+                <input type="number" id="airDensity" value="1.225" min="0" onchange="
                     if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
                     if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-                    document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(this.value)/2), 3) * (parseFloat(document.getElementById('density').value)/ 1000000)) * 1000) / 1000;
                 ">
-                <label for="density">Density (kg/m³) : </label>
-                <input type="number" id="density" min="0.1" max="22590" value="1000" onchange="
-                    if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
-                    if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-                    document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById('size').value)/2), 3) * (parseFloat(this.value)/ 1000000))*1000)/1000;
-                " list="densities">
-                <datalist id="densities">
-                    <option value="0.18" label="Helium">Helium</option>
-                    <option value="1.225">Air</option>
-                    <option value="575">Chestnut wood</option>
-                    <option value="1000">Water</option>
-                    <option value="7850">Steel</option>
-                    <option value="22590">Osmium</option>
-                </datalist>
-                <label for="mass">Mass (kg) : </label>
-                <input type="number" id="mass" value="14.137" readonly>
-                <label for="elasticity">Elasticity : </label>
-                <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
-                <output>0.50</output>
-                <div>
-                    <label for="insideColor">Color : </label>
-                    <input type="color" id="insideColor" value="#FF0000">
-                </div>
-                <div>
-                    <label for="hasGravity">Has gravity : </label>
-                    <input type="checkbox" id="hasGravity" checked>
-                </div>
-                <div>
-                    <label for="isMovable">Is movable : </label>
-                    <input type="checkbox" id="isMovable" checked disabled>
-                </div>
+                <div id="variablesApplyButton" class="button apply">Apply</div>
             </div>
 
-            <!-- Materials -->
-            <div class="menuColumn" id="materialsColumn">
-                <h2>Density presets</h2>
-                <!-- Filled with JS loop -->
+            <!-- Tool selection menu -->
+            <div class="subMenuContainer">
+                <div class="button" id="particleCreatorButton">Particle creator</div>
+                <div class="button">Zones</div>
             </div>
 
-            <div id="particleToolApply" class="button apply">Apply</div>
+            <!-- Custom particle creation tool -->
+            <div id="particleTool" class="subMenuContainer">
+                <!-- Variables and sliders-->
+                <div class="menuColumn">
+                    <h2>Custom particle</h2>
+                    <label for="size">Diameter (cm) : </label>
+                    <input type="number" id="size" value="30" min="1" max="970" step="10" onchange="
+                        if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
+                        if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
+                        document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(this.value)/2), 3) * (parseFloat(document.getElementById('density').value)/ 1000000)) * 1000) / 1000;
+                    ">
+                    <label for="density">Density (kg/m³) : </label>
+                    <input type="number" id="density" min="0.1" max="22590" value="1000" onchange="
+                        if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
+                        if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
+                        document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById('size').value)/2), 3) * (parseFloat(this.value)/ 1000000))*1000)/1000;
+                    " list="densities">
+                    <datalist id="densities">
+                        <option value="0.18" label="Helium">Helium</option>
+                        <option value="1.225">Air</option>
+                        <option value="575">Chestnut wood</option>
+                        <option value="1000">Water</option>
+                        <option value="7850">Steel</option>
+                        <option value="22590">Osmium</option>
+                    </datalist>
+                    <label for="mass">Mass (kg) : </label>
+                    <input type="number" id="mass" value="14.137" readonly>
+                    <label for="elasticity">Elasticity : </label>
+                    <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
+                    <output>0.50</output>
+                    <div>
+                        <label for="insideColor">Color : </label>
+                        <input type="color" id="insideColor" value="#FF0000">
+                    </div>
+                    <div>
+                        <label for="hasGravity">Has gravity : </label>
+                        <input type="checkbox" id="hasGravity" checked>
+                    </div>
+                    <div>
+                        <label for="isMovable">Is movable : </label>
+                        <input type="checkbox" id="isMovable" checked disabled>
+                    </div>
+                </div>
+
+                <!-- Materials -->
+                <div class="menuColumn" id="materialsColumn">
+                    <h2>Density presets</h2>
+                    <!-- Filled with JS loop -->
+                </div>
+
+                <div id="particleToolApply" class="button apply">Apply</div>
+            </div>
+
+            <!-- Modal tutorial window -->
+            <dialog>
+                <button id="closeButton">X</button>
+                <h2>Guide</h2>
+                <ul>
+                    <li>Scroll wheel to spawn balls</li>
+                    <li>Click and drag to draw an anti-gravity zone <br> (only the last one that's drawn works for now)</li>
+                    <li>Hover over balls to give them an upwards push</li>
+                    <li>Get info about particles in the console</li>
+                    <li><a href="https://github.com/BasileDM/Physics-engine-simulation-game" target="_blank">Github repository</a></li>
+                </ul>
+            </dialog>
+            <div id="tutorial"></div>
         </div>
 
-        <!-- Modal tutorial window -->
-        <dialog>
-            <button id="closeButton">X</button>
-            <h2>Guide</h2>
-            <ul>
-                <li>Scroll wheel to spawn balls</li>
-                <li>Click and drag to draw an anti-gravity zone <br> (only the last one that's drawn works for now)</li>
-                <li>Hover over balls to give them an upwards push</li>
-                <li>Get info about particles in the console</li>
-                <li><a href="https://github.com/BasileDM/Physics-engine-simulation-game" target="_blank">Github repository</a></li>
-            </ul>
-        </dialog>
-        <div id="tutorial"></div>
-    </div>
-
-    <script src="scripts/app.js" type="module"></script>
-</body>
+        <script src="scripts/app.js" type="module"></script>
+    </body>
 </html>

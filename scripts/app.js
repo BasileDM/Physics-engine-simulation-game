@@ -3,7 +3,7 @@ import { Block } from "./classes/Particle.js";
 import { Vector } from "./classes/Vector.js";
 
 // Variables
-let gravityY = 0.002 // Default : 0.002 Used for toggle gravity
+let gravityY = 0.002 // Default : 0.002 Used for the gravity toggle button
 export let gravity = new Vector(0, gravityY);
 export let airDensity = 1.225 / 1000000; // Default : 1.225 (/1000000 to convert to kg/cm^3)
 
@@ -26,13 +26,12 @@ function getCollisionResponse(currentParticle, checkedParticle) {
             currentParticle.hasGravity = true;
         };
     }
-
+    
     if (distance <= 0 && checkedParticle.shape != "Rectangle")  {
-        
         let currentParticleCenter = currentParticle.positionVector.add(new Vector(currentParticle.radius, currentParticle.radius));
         let checkedParticleCenter = checkedParticle.positionVector.add(new Vector(checkedParticle.radius, checkedParticle.radius));
         
-        // Help from chatGPT on how to use my vectors for simple but more realistic collision handling
+        // Using vectors for simple but more realistic collision handling
         // Vectorial math applying conservation of momentum and energy principles
         let relativeVelocity = currentParticle.velocity.subtract(checkedParticle.velocity);
         let collisionNormal = checkedParticleCenter.subtract(currentParticleCenter).normalize();
@@ -48,7 +47,7 @@ function getCollisionResponse(currentParticle, checkedParticle) {
             checkedParticle.velocity = checkedParticle.velocity.add(collisionNormal.scale(impulse / checkedParticle.mass));
         }
         
-        // Solution for preventing particles from sinking into each other :
+        // Solution to prevent particles from sinking into each other :
         // Adding a separation distance along the collision normal
         const separationDistance = 0.5;
         if (currentParticle.isMovable) {
@@ -64,7 +63,7 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     let currentParticleCenter = currentParticle.positionVector.add(new Vector(currentParticle.radius, currentParticle.radius));
     let checkedParticleCenter = checkedParticle.positionVector.add(new Vector(checkedParticle.radius, checkedParticle.radius));
 
-    // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive but I'll do it later)
+    // Pythagorean distance check (can be refactored to avoid using Sqrt which is expensive)
     let distanceVector = currentParticleCenter.subtract(checkedParticleCenter);
     let combinedRadius = currentParticle.radius + checkedParticle.radius;
     let distance = distanceVector.getMagnitude() - combinedRadius;
@@ -83,34 +82,31 @@ function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
     }
 }
 
-let hasGravity = true;
-let isMovable = true;
-let diameter = "30px";
-let elasticity = 0.5;
-let density = 1000;
-let color = "red";
-let borderColor = `${elasticity * 6}px solid #70008F`
+let hasGravity;
+let isMovable;
+let diameter;
+let elasticity;
+let density;
+let color;
+let borderColor;
 function createParticle(event) {
-    let mousePositionX = event.clientX;
-    let mousePositionY = event.clientY;
+    let mousePositionVector = new Vector (event.clientX, event.clientY);
     let newParticle = new Particle(
-        mousePositionX, 
-        mousePositionY,
+        mousePositionVector,
         "Sphere",
         hasGravity,
         isMovable,
         diameter,
         elasticity,
         density,
-        color,
-        borderColor);
+        color);
     particles.push(newParticle);
     newParticle.spawn();
     console.log(newParticle);
     newParticle.element.addEventListener("mouseenter", function(){
         let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
         newParticle.velocity = randomVelocity;
-    })
+    });
 }
 
 function startDrag(event) {
@@ -122,10 +118,10 @@ function createBlock(event) {
     if (hasDragStarted) {
         let mouseDragEnd = new Vector(event.clientX, event.clientY);
         let newBlock = new Block(
-            Math.min(mouseDragStart.x, mouseDragEnd.x),
-            Math.min(mouseDragStart.y, mouseDragEnd.y),
+            new Vector (Math.min(mouseDragStart.x, mouseDragEnd.x), Math.min(mouseDragStart.y, mouseDragEnd.y)),
             Math.abs(mouseDragStart.x - mouseDragEnd.x),
-            Math.abs(mouseDragStart.y - mouseDragEnd.y));
+            Math.abs(mouseDragStart.y - mouseDragEnd.y)
+        );
         particles.push(newBlock);
         newBlock.spawn();
         newBlock.update();
@@ -166,8 +162,8 @@ function mainLoop() {
 //
 // // Mouse events
 document.getElementById("playground").addEventListener("mousedown", startDrag);
-document.getElementById("playground").addEventListener("mouseup", createBlock)
-document.getElementById("playground").addEventListener("wheel", createParticle)
+document.getElementById("playground").addEventListener("mouseup", createBlock);
+document.getElementById("playground").addEventListener("wheel", createParticle);
 
 // // Button events
 // Gravity toggle
@@ -196,7 +192,6 @@ document.getElementById("particleToolApply").addEventListener("click", function(
     elasticity = parseFloat(document.getElementById("elasticity").value);
     density = document.getElementById("density").value;
     color = document.getElementById("insideColor").value;
-    borderColor = `${elasticity * 6}px solid #70008F`;
     isMovable = document.getElementById("isMovable").checked;
     hasGravity = document.getElementById("hasGravity").checked;
 })
@@ -209,9 +204,9 @@ let materialList = [
     {"Name": "Water", "Density": 1000, "Color": "#6495ed"},
     {"Name": "Steel", "Density": 7850, "Color": "#6C6C6C"},
     {"Name": "Osmium", "Density": 22590, "Color": "#9090A3"}
-    
 ];
 let materialsColumn = document.querySelector("#materialsColumn");
+
 // Creating material cards HTML
 materialList.forEach(function (material) {
     materialsColumn.innerHTML +=
@@ -220,6 +215,7 @@ materialList.forEach(function (material) {
             <p>${material.Name}</p>
         </div>`;
 });
+
 // Adding color and event listeners to each of them
 materialList.forEach(function (material) {
     document.getElementById(`${material.Name}`).addEventListener("click", () => {
@@ -228,8 +224,6 @@ materialList.forEach(function (material) {
         document.getElementById("insideColor").value = material.Color;
     });
 });
-
-// document.getElementById("air").addEventListener("click", () => )
 
 // Fullscreen button
 let isFullscreen = false;

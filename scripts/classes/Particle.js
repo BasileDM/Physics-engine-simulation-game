@@ -8,22 +8,20 @@ export class Particle {
    hasGravity;
    
    constructor(
-      positionXParam,
-      positionYParam,
+      positionVector,
       shape,
-      hasGravity,
-      isMovable,
-      diameter,
-      elasticity,
-      density,
-      color,
-      borderColor
+      hasGravity = true,
+      isMovable = true,
+      diameter = "30px",
+      elasticity = 0.5,
+      density = 1000,
+      color = "red"
    ) {
       this.element = document.createElement("div");
-      this.positionVector = new Vector(positionXParam, positionYParam);
+      this.positionVector = positionVector;
       this.shape = shape;
       this.color = color;
-      this.borderColor = borderColor;
+      this.border = `${elasticity * 6}px solid #70008F`;
 
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
@@ -64,14 +62,13 @@ export class Particle {
       this.hasGravity = bool;
    }
 
-
    spawn() {
       let newParticle = this.element;
       newParticle.style.position = "absolute";
       newParticle.style.top = `${this.positionVector.x}px`;
       newParticle.style.left = `${this.positionVector.y}px`;
       newParticle.style.backgroundColor = this.color;
-      newParticle.style.border = this.borderColor;
+      newParticle.style.border = this.border;
       newParticle.style.boxSizing = "border-box";
       newParticle.style.zIndex = "10";
 
@@ -182,14 +179,14 @@ export class Particle {
 }
 
 export class Block extends Particle {
-   constructor(positionXParam, positionYParam, width, height) {
-      super(positionXParam, positionYParam, "Rectangle", 1, false, false); // Shape, mass, hasGravity, isMovable
+   constructor(positionVector, width, height) {
+      super(positionVector, "Rectangle", 1, false, false); // Shape, mass, hasGravity, isMovable
       this.width = width;
       this.height = height;
       this.color = "blue";
-      
       this.render();
    }
+
    render() {
       let element = this.getElement();
       element.style.left = `${this.positionVector.x}px`;

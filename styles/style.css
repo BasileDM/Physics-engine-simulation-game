@@ -14,10 +14,8 @@ body {
 input[type='range'], input[type="checkbox"] {
     accent-color: green;
     cursor: pointer;
-    label {
-        cursor: pointer;
-    }
 }
+
 /* #region Playground, walls, scale */
 #playground {
     position: relative;
@@ -60,7 +58,6 @@ input[type='range'], input[type="checkbox"] {
     width: 100%;
     background-color: rgb(67, 67, 67);
 }
-
 #scale {
     width: 20px;
     height: 5px;
@@ -83,6 +80,7 @@ input[type='range'], input[type="checkbox"] {
 /* #region Buttons and tools */
 .menu {
     margin: 1.4em;
+
     label {
         padding: 5px;
         color: white;
@@ -116,6 +114,7 @@ input[type='range'], input[type="checkbox"] {
     flex-direction: row;
     flex-wrap: wrap;
     padding: 5px;
+
     h2 {
         color: white;
     }
@@ -158,6 +157,7 @@ input[type='range'], input[type="checkbox"] {
     box-shadow: 2px 2px 3px rgba(255, 255, 255, 0.349);
     background-color: white;
     margin: auto 0 auto 0;
+
     &:hover {
         background-color: rgba(208, 206, 206, 0.791);
     }
@@ -165,6 +165,7 @@ input[type='range'], input[type="checkbox"] {
         margin: 0;
     }
 }
+
 #airDensity {
     margin-right: 20px;
     max-width: 60px;
@@ -179,6 +180,7 @@ input[type='range'], input[type="checkbox"] {
     padding: 10px 20px;
     margin: 0.8em 0.8em 0.8em auto;
     align-self: self-end;
+
     &:hover {
         background-color: rgb(0, 72, 0);
     }
@@ -199,6 +201,7 @@ input[type='range'], input[type="checkbox"] {
     font-weight: bold;
     font-size: 20px;
     padding: 15px;
+
     .button {
         font-size: 16px;
         margin: 0px;
@@ -227,6 +230,7 @@ input[type='range'], input[type="checkbox"] {
 }
 dialog {
     border-radius: 25px;
+    
     h2 {
         margin: 0 20px;
     }
