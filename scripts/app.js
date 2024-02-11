@@ -28,7 +28,6 @@ function getCollisionResponse(currentParticle, checkedParticle) {
     }
 
     if (distance <= 0 && checkedParticle.shape != "Rectangle")  {
-        currentParticle.setColliding(true);
         
         let currentParticleCenter = currentParticle.positionVector.add(new Vector(currentParticle.radius, currentParticle.radius));
         let checkedParticleCenter = checkedParticle.positionVector.add(new Vector(checkedParticle.radius, checkedParticle.radius));
@@ -89,6 +88,8 @@ let isMovable = true;
 let diameter = "30px";
 let elasticity = 0.5;
 let density = 1000;
+let color = "red";
+let borderColor = `${elasticity * 10}px solid #70008F`
 function createParticle(event) {
     let mousePositionX = event.clientX;
     let mousePositionY = event.clientY;
@@ -100,7 +101,9 @@ function createParticle(event) {
         isMovable,
         diameter,
         elasticity,
-        density);
+        density,
+        color,
+        borderColor);
     particles.push(newParticle);
     newParticle.spawn();
     console.log(newParticle);
@@ -178,14 +181,6 @@ document.getElementById("variablesApplyButton").addEventListener("click", functi
     airDensity =  parseFloat(document.getElementById("airDensity").value) / 1000000;
 })
 
-// Clear button
-document.getElementById("clearPlayground").addEventListener("click", function() {
-    for (let particle of particles) {
-        particle.destroy();
-    }
-    particles = [];
-})
-
 // // Tools
 // Particle tool
 let particleToolButton = document.getElementById("particleCreatorButton");
@@ -195,15 +190,46 @@ particleToolButton.addEventListener("click", function() {
     particleTool.style.visibility = "visible" : 
     particleTool.style.visibility = "hidden";
 })
- 
+// Particle properties apply button
 document.getElementById("particleToolApply").addEventListener("click", function() {
     diameter = `${document.getElementById("size").value}px`;
     elasticity = parseFloat(document.getElementById("elasticity").value);
     density = document.getElementById("density").value;
+    color = document.getElementById("insideColor").value;
+    borderColor = `${elasticity * 6}px solid #70008F`;
     isMovable = document.getElementById("isMovable").checked;
     hasGravity = document.getElementById("hasGravity").checked;
 })
 
+// // Density presets buttons
+let materialList = [
+    {"Name": "Helium", "Density": 0.18, "Color": "#A6B7C5"},
+    {"Name": "Air", "Density": 1.225, "Color": "#f5f5f5"},
+    {"Name": "Chestnut wood", "Density": 575, "Color": "#CDAC79"},
+    {"Name": "Water", "Density": 1000, "Color": "#6495ed"},
+    {"Name": "Steel", "Density": 7850, "Color": "#6C6C6C"},
+    {"Name": "Osmium", "Density": 22590, "Color": "#9090A3"}
+    
+];
+let materialsColumn = document.querySelector("#materialsColumn");
+// Creating material cards HTML
+materialList.forEach(function (material) {
+    materialsColumn.innerHTML +=
+        `<div class="materialContainer" id="${material.Name}" title="${material.Name} &#013; Density : ${material.Density}kg/m³">
+            <div id="material${material.Name}" class="material" alt="${material.Name}" title="${material.Name}" style="background-color: ${material.Color};"></div>
+            <p>${material.Name}</p>
+        </div>`;
+});
+// Adding color and event listeners to each of them
+materialList.forEach(function (material) {
+    document.getElementById(`${material.Name}`).addEventListener("click", () => {
+        document.getElementById(`material${material.Name}`).style.backgroundColor = `${material.Color}`;
+        document.getElementById("density").value = material.Density;
+        document.getElementById("insideColor").value = material.Color;
+    });
+});
+
+// document.getElementById("air").addEventListener("click", () => )
 
 // Fullscreen button
 let isFullscreen = false;
@@ -218,6 +244,14 @@ fullscreenButton.addEventListener("click", function() {
         isFullscreen = false;
         fullscreenButton.textContent = "Go fullscreen"
     }
+})
+
+// Clear button
+document.getElementById("clearPlayground").addEventListener("click", function() {
+    for (let particle of particles) {
+        particle.destroy();
+    }
+    particles = [];
 })
 
 // Modal window for tutorial

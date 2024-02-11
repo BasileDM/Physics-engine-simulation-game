@@ -15,12 +15,15 @@ export class Particle {
       isMovable,
       diameter,
       elasticity,
-      density
+      density,
+      color,
+      borderColor
    ) {
       this.element = document.createElement("div");
       this.positionVector = new Vector(positionXParam, positionYParam);
       this.shape = shape;
-      this.color = "white";
+      this.color = color;
+      this.borderColor = borderColor;
 
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
@@ -41,17 +44,12 @@ export class Particle {
       this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
       this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
       
-      this.isColliding = false;
       this.hasGravity = hasGravity;
       this.isMovable = isMovable;
    }
 
    getElement() {
       return this.element;
-   }
-
-   setColliding(isCollidingParam) {
-      this.isColliding = isCollidingParam;
    }
 
    setColor(color) {
@@ -73,7 +71,7 @@ export class Particle {
       newParticle.style.top = `${this.positionVector.x}px`;
       newParticle.style.left = `${this.positionVector.y}px`;
       newParticle.style.backgroundColor = this.color;
-      newParticle.style.border = "1px solid black";
+      newParticle.style.border = this.borderColor;
       newParticle.style.boxSizing = "border-box";
       newParticle.style.zIndex = "10";
 
@@ -102,9 +100,6 @@ export class Particle {
       let dragForceVector = dragForceDirection.scale(this.dragForce);
       let net_force;
 
-      if (this.isColliding) {
-         this.setColor("red");
-      }
       if (this.hasGravity) {
          // Scale gravity to the mass of the object
          let gravityForce = gravity.scale(this.mass);
@@ -181,7 +176,6 @@ export class Particle {
    }
 
    destroy() {
-      this.setColliding(false);
       let element = this.getElement();
       element.remove();
    }

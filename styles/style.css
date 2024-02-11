@@ -13,6 +13,14 @@ body {
         color: white;
     }
 }
+
+input[type='range'], input[type="checkbox"] {
+    accent-color: green;
+    cursor: pointer;
+    label {
+        cursor: pointer;
+    }
+}
 /* #region Playground, walls, scale */
 #playground {
     position: relative;
@@ -101,31 +109,32 @@ body {
     visibility: visible;
 }
 
-/* Frame counter */
-#sideMenu {
-    background-color: black;
-    position: fixed;
-    left : 100vh;
-    bottom: 0;
-    z-index: 10;
-    display: block;
-    color: green;
-    font-weight: bold;
-    font-size: 20px;
+.menuColumn {
+    display: flex;
     padding: 10px;
-    .button {
-        font-size: 16px;
-        margin: 10px;
-    }
-}
+    flex-direction: column;
 
-#clearPlayground {
-    color: red;
+    label {
+        cursor: pointer;
+    }
+    div {
+        display: flex;
+    }
+    input[type="checkbox"], input[type="color"] {
+        width: 30%;
+        cursor: pointer;
+        justify-self: right;
+        margin-left: auto;
+        padding: none;
+    }
+    input[type="color"] {
+        margin-right: 4px;
+    }
 }
 
 .button {
     border: 1px solid black;
-    border-radius: 10px;
+    border-radius: 0px;
     width: max-content;
     cursor: pointer;
     padding: 0.5em;
@@ -141,13 +150,49 @@ body {
     }
 }
 .apply {
-    border: 4px solid green;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    border-radius: 20px;
+    box-shadow: none;
+    padding: 10px 20px;
+    &:hover {
+        background-color: rgb(0, 72, 0);
+    }
+}
+
+#mass {
+    cursor: no-drop;
+}
+
+/* Frame counter */
+#sideMenu {
+    position: fixed;
+    left : 100vh;
+    bottom: 0;
+    z-index: 10;
+    display: block;
+    color: green;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 15px;
+    .button {
+        font-size: 16px;
+        margin: 0px;
+        width: 100%;
+        text-align: center;
+        border-radius: 20px;
+    }
+}
+
+#clearPlayground {
+    color: red;
 }
 /* #endregion */
 
 /*#region Tutorial and modal window */
 #tutorial {
-    background-image: url(images/question-mark.svg);
+    background-image: url(../images/question-mark.svg);
     background-size: contain;
     width: 45px;
     height: 45px;
@@ -167,8 +212,8 @@ dialog {
     background-image: linear-gradient(
       -45deg,
       rgb(228, 228, 228),
-      rgb(115, 86, 144),
-      rgb(46, 46, 46),
+      rgba(26, 129, 0, 0.372),
+      rgba(7, 85, 0, 0.43),
       rgb(0, 0, 0)
       
     );

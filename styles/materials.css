@@ -1,0 +1,26 @@
+.materialContainer {
+    color: white;
+    display: flex;
+    align-items: center;
+    border: 1px solid white;
+    margin: 2px;
+
+    &:hover{
+        border: 1px solid green;
+        cursor: pointer;
+    }
+    p {
+        margin-left: 5px;
+    }
+}
+.material {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    box-sizing: border-box;
+    border: 1px solid white;
+    margin: 7px;
+
+}
