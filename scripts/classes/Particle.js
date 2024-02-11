@@ -108,7 +108,6 @@ export class Particle extends Entity {
    #mass;
    constructor(
       positionVector, 
-      shape, 
       hasGravity, 
       isMovable, 
       diameter = "30px", 
@@ -116,7 +115,7 @@ export class Particle extends Entity {
       density, 
       color
    ){
-      super(positionVector, shape, hasGravity, isMovable, density, color)
+      super(positionVector, "Sphere", hasGravity, isMovable, density, color)
       this.acceleration = new Vector(0, 0);
       this.velocity = new Vector(0, 0);
 
@@ -208,6 +207,10 @@ export class Particle extends Entity {
 
       // Floor
       const floorTop = document.getElementById("floor").getBoundingClientRect().top;
+      const leftWallX = document.getElementById("left-wall").getBoundingClientRect().right;
+      const rightWallX = document.getElementById("right-wall").getBoundingClientRect().left;
+      const ceilingBot = document.getElementById("ceiling").getBoundingClientRect().bottom;
+
       if (this.positionVector.y + parseInt(this.diameter) > floorTop) {
          let collisionNormal = new Vector(0, -1); // Floor collision normal (could be a const but I want it scoped to the if block)
          let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
@@ -216,7 +219,6 @@ export class Particle extends Entity {
          this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
       // Left wall
-      const leftWallX = document.getElementById("left-wall").getBoundingClientRect().right;
       if (this.positionVector.x < leftWallX) {
          let collisionNormal = new Vector(1, 0); // Left wall collision normal (could be a const but I want it scoped to the if block)
          let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
@@ -225,7 +227,6 @@ export class Particle extends Entity {
          this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
       // Right wall
-      const rightWallX = document.getElementById("right-wall").getBoundingClientRect().left;
       if (this.positionVector.x + parseInt(this.diameter) > rightWallX) {
          let collisionNormal = new Vector(-1, 0); // Right wall collision normal (could be a const but I want it scoped to the if block)
          let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
@@ -234,7 +235,6 @@ export class Particle extends Entity {
          this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
       // Ceiling
-      const ceilingBot = document.getElementById("ceiling").getBoundingClientRect().bottom;
       if (this.positionVector.y < ceilingBot) {
          let collisionNormal = new Vector(0, 1); // Ceiling collision normal (could be a const but I want it scoped to the if block)
          let impulse = getImpulse(collisionNormal, this.velocity, this.elasticity, this.mass);
@@ -248,10 +248,12 @@ export class Particle extends Entity {
 export class Zone extends Entity {
    #width;
    #height;
+   #affectedParticles;
    constructor(positionVector, width, height) {
       super(positionVector, "Rectangle", false, false, 500, "blue");
       this.#width = width;
       this.#height = height;
+      this.#affectedParticles = [];
       this.render();
    }
 
@@ -266,6 +268,16 @@ export class Zone extends Entity {
    }
    set height(height) {
       this.#height = height;
+   }
+   get affectedParticles() {
+      return this.#affectedParticles;
+   }
+   set affectedParticles(affectedParticles) {
+      this.#affectedParticles = affectedParticles;
+   }
+
+   addToAffectedParticles(newParticle) {
+      this.affectedParticles = [...this.affectedParticles, newParticle];
    }
 
    render() {

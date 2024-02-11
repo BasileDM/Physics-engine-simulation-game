@@ -20,10 +20,19 @@ function getCollisionResponse(currentParticle, checkedParticle) {
     let distance = getDistanceSphereToSphere(currentParticle, checkedParticle);
                 
     if (checkedParticle.shape == "Rectangle") {
-        if (isSphereTouchingRectangle(currentParticle, checkedParticle)) {
-            currentParticle.hasGravity = false;
-        } else {
-            currentParticle.hasGravity = true;
+        if (isParticleInsideZone(currentParticle, checkedParticle) && !isParticleInZoneArray(currentParticle, checkedParticle)) {
+            
+            checkedParticle.addToAffectedParticles(currentParticle);
+            let currentParticleIndex = checkedParticle.affectedParticles.findIndex(
+                (element) => element == currentParticle);
+            checkedParticle.affectedParticles[currentParticleIndex].hasGravity = false;
+
+        } else if (!isParticleInsideZone(currentParticle, checkedParticle) && isParticleInZoneArray(currentParticle, checkedParticle)) {
+            
+            let currentParticleIndex = checkedParticle.affectedParticles.findIndex(
+                (element) => element == currentParticle);
+            checkedParticle.affectedParticles[currentParticleIndex].hasGravity = true;
+            checkedParticle.affectedParticles.splice(currentParticleIndex, 1);
         };
     }
     
@@ -70,7 +79,7 @@ function getDistanceSphereToSphere(currentParticle, checkedParticle) {
     return distance;
 }
 
-function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
+function isParticleInsideZone(sphereParticle, rectangleParticle) {
     let sphereParticleRadius = parseInt(sphereParticle.diameter)/2;
     if (sphereParticle.positionVector.x + sphereParticleRadius > rectangleParticle.positionVector.x &&
         sphereParticle.positionVector.x + sphereParticleRadius < rectangleParticle.positionVector.x + rectangleParticle.width &&
@@ -80,6 +89,10 @@ function isSphereTouchingRectangle(sphereParticle, rectangleParticle) {
     } else {
         return false;
     }
+}
+
+function isParticleInZoneArray(currentParticle, checkedParticle) {
+    return checkedParticle.affectedParticles.findIndex((element) => element == currentParticle) >= 0;
 }
 
 let hasGravity;
@@ -92,7 +105,6 @@ function createParticle(event) {
     let mousePositionVector = new Vector (event.clientX, event.clientY);
     let newParticle = new Particle(
         mousePositionVector,
-        "Sphere",
         hasGravity,
         isMovable,
         diameter,
@@ -100,7 +112,7 @@ function createParticle(event) {
         density,
         color);
     particles.push(newParticle);
-
+    console.log(newParticle);
     // Mouse push on hover
     newParticle.element.addEventListener("mouseenter", function(){
         let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
