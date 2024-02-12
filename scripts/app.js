@@ -21,23 +21,18 @@ function getCollisionResponse(currentParticle, checkedParticle) {
                 
     if (checkedParticle.shape == "Rectangle") {
         if (isParticleInsideZone(currentParticle, checkedParticle) && !isParticleInZoneArray(currentParticle, checkedParticle)) {
-            
             checkedParticle.addToAffectedParticles(currentParticle);
-            let currentParticleIndex = checkedParticle.affectedParticles.findIndex(
-                (element) => element == currentParticle);
-            checkedParticle.affectedParticles[currentParticleIndex].hasGravity = false;
-
             checkedParticle.addEffectToParticle(currentParticle);
-            console.log(currentParticle);
+            if (checkedParticle.isDensityZone) currentParticle.changeMedium(checkedParticle.density);
+
 
         } else if (!isParticleInsideZone(currentParticle, checkedParticle) && isParticleInZoneArray(currentParticle, checkedParticle)) {
             
             let currentParticleIndex = checkedParticle.affectedParticles.findIndex(
                 (element) => element == currentParticle);
-            checkedParticle.affectedParticles[currentParticleIndex].hasGravity = true;
             checkedParticle.affectedParticles.splice(currentParticleIndex, 1);
-
             checkedParticle.removeEffectFromParticle(currentParticle);
+            currentParticle.changeMedium(airDensity);
         };
     }
     
@@ -136,8 +131,9 @@ function createZone(event) {
         let newZone = new Zone(
             new Vector (Math.min(mouseDragStart.x, mouseDragEnd.x), Math.min(mouseDragStart.y, mouseDragEnd.y)),
             Math.abs(mouseDragStart.x - mouseDragEnd.x),
-            Math.abs(mouseDragStart.y - mouseDragEnd.y)
-        );
+            Math.abs(mouseDragStart.y - mouseDragEnd.y),
+            false); // isDensityZone
+            
         particles.push(newZone);
         console.log(newZone);
     }

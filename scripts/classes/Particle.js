@@ -108,6 +108,7 @@ export class Particle extends Entity {
    #elasticity;
    #mass;
    #effectList;
+   #currentMediumDensity;
    constructor(
       positionVector, 
       hasGravity, 
@@ -136,7 +137,8 @@ export class Particle extends Entity {
       // Equation for quadratic drag force : 
       // 0.5 * dragCoef * cross-sectional area of the object * density of medium (air) * velocity squared
       this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
-      this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
+      this.#currentMediumDensity = airDensity;
+      this.dragForce = 0.5 * this.dragCoef * this.area * this.#currentMediumDensity * Math.pow(this.velocity.getMagnitude(), 2);
       
       this.#effectList = {
          "Anti-gravity": 0
@@ -177,6 +179,12 @@ export class Particle extends Entity {
    set effectList(effectList) {
       this.#effectList = effectList;
    }
+   get currentMediumDensity() {
+      return this.#currentMediumDensity;
+   }
+   set currentMediumDensity(density) {
+      this.#currentMediumDensity = density;
+   }
    //#endregion
 
    addEffect(effectName) {
@@ -185,11 +193,17 @@ export class Particle extends Entity {
    removeEffect(effectName) {
       this.effectList[effectName] -= 1;
    }
+   checkAppliedEffects() {
+      this.effectList["Anti-gravity"] === 0 ? this.hasGravity = true : this.hasGravity = false;
+   }
+   changeMedium(mediumDensity) {
+      this.currentMediumDensity = mediumDensity;
+   }
 
    update() {
       let scaledVelocity = new Vector(0, 0);
       // Update drag force according to current velocity
-      this.dragForce =  0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
+      this.dragForce =  0.5 * this.dragCoef * this.area * this.#currentMediumDensity * Math.pow(this.velocity.getMagnitude(), 2);
       // dragForceDirection is the opposite of the current direction (normalized velocity)
       let dragForceDirection = this.velocity.normalize().scale(-1);
       // Make drag force a vector with the raw force * normalized direction
@@ -199,7 +213,7 @@ export class Particle extends Entity {
       if (this.hasGravity) {
          // Scale gravity to the mass of the object
          let gravityForce = gravity.scale(this.mass);
-         let buoyantForce = gravity.scale(-this.volume*airDensity);
+         let buoyantForce = gravity.scale(-this.volume*this.#currentMediumDensity);
          net_force = gravityForce.add(dragForceVector).add(buoyantForce);
          // net_force = gravity.add(dragForceVector); // No gravity scaling to the mass
          // this.velocity = this.velocity.add(gravity); // OLD basic velocity addition
@@ -264,6 +278,7 @@ export class Particle extends Entity {
          this.positionVector.y = ceilingBot;
          this.velocity = this.velocity.subtract(collisionNormal.scale(impulse / this.mass));
       }
+      this.checkAppliedEffects();
    }
 }
 
@@ -272,11 +287,13 @@ export class Zone extends Entity {
    #height;
    #affectedParticles;
    #effect;
-   constructor(positionVector, width, height, effect = "Anti-gravity") {
-      super(positionVector, "Rectangle", false, false, 500, "blue");
+   #isDensityZone;
+   constructor(positionVector, width, height, isDensityZone, effect = "Anti-gravity") {
+      super(positionVector, "Rectangle", false, false, 0.001, "blue");
       this.#width = width;
       this.#height = height;
       this.#effect = effect;
+      this.#isDensityZone = isDensityZone;
       this.#affectedParticles = [];
       this.spawn();
       this.render();
@@ -306,6 +323,12 @@ export class Zone extends Entity {
    }
    set affectedParticles(affectedParticles) {
       this.#affectedParticles = affectedParticles;
+   }
+   get isDensityZone() {
+      return this.#isDensityZone;
+   }
+   set isDensityZone(isDensityZone) {
+      this.#isDensityZone = isDensityZone;
    }
    //#endregion
 
