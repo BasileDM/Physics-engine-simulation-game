@@ -27,12 +27,17 @@ function getCollisionResponse(currentParticle, checkedParticle) {
                 (element) => element == currentParticle);
             checkedParticle.affectedParticles[currentParticleIndex].hasGravity = false;
 
+            checkedParticle.addEffectToParticle(currentParticle);
+            console.log(currentParticle);
+
         } else if (!isParticleInsideZone(currentParticle, checkedParticle) && isParticleInZoneArray(currentParticle, checkedParticle)) {
             
             let currentParticleIndex = checkedParticle.affectedParticles.findIndex(
                 (element) => element == currentParticle);
             checkedParticle.affectedParticles[currentParticleIndex].hasGravity = true;
             checkedParticle.affectedParticles.splice(currentParticleIndex, 1);
+
+            checkedParticle.removeEffectFromParticle(currentParticle);
         };
     }
     
@@ -134,8 +139,6 @@ function createZone(event) {
             Math.abs(mouseDragStart.y - mouseDragEnd.y)
         );
         particles.push(newZone);
-        newZone.spawn();
-        newZone.render();
         console.log(newZone);
     }
     hasDragStarted = false;

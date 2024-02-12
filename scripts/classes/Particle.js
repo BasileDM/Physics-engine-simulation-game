@@ -72,16 +72,17 @@ export class Entity {
       newParticle.style.backgroundColor = this.color;
       newParticle.style.border = this.border;
       newParticle.style.boxSizing = "border-box";
-      newParticle.style.zIndex = "10";
 
       if (this.shape == "Sphere") {
          newParticle.style.width = this.diameter;
          newParticle.style.height = this.diameter;
          newParticle.style.borderRadius = "50%";
+         newParticle.style.zIndex = "10";
       } else if (this.shape == "Rectangle") {
          newParticle.style.borderRadius = "none";
          newParticle.style.width = `${this.width}px`;
          newParticle.style.height = `${this.height}px`;
+         newParticle.style.zIndex = 0;
       } else {
          console.warn("Shape is undefined.");
       }
@@ -106,6 +107,7 @@ export class Particle extends Entity {
    #radius;
    #elasticity;
    #mass;
+   #effectList;
    constructor(
       positionVector, 
       hasGravity, 
@@ -136,9 +138,15 @@ export class Particle extends Entity {
       this.dragCoef = 0.47; // Default is 0.47 for real life value approximation
       this.dragForce = 0.5 * this.dragCoef * this.area * airDensity * Math.pow(this.velocity.getMagnitude(), 2);
       
+      this.#effectList = {
+         "Anti-gravity": 0
+      };
+
       this.spawn();
+      this.render();
    }
    
+   //#region Getters and Setters
    get diameter() {
       return this.#diameter;
    }
@@ -162,6 +170,20 @@ export class Particle extends Entity {
    }
    set mass(mass) {
       this.#mass = mass;
+   }
+   get effectList() {
+      return this.#effectList;
+   }
+   set effectList(effectList) {
+      this.#effectList = effectList;
+   }
+   //#endregion
+
+   addEffect(effectName) {
+      this.effectList[effectName] += 1;
+   }
+   removeEffect(effectName) {
+      this.effectList[effectName] -= 1;
    }
 
    update() {
@@ -249,14 +271,18 @@ export class Zone extends Entity {
    #width;
    #height;
    #affectedParticles;
-   constructor(positionVector, width, height) {
+   #effect;
+   constructor(positionVector, width, height, effect = "Anti-gravity") {
       super(positionVector, "Rectangle", false, false, 500, "blue");
       this.#width = width;
       this.#height = height;
+      this.#effect = effect;
       this.#affectedParticles = [];
+      this.spawn();
       this.render();
    }
 
+   //#region Getters and Setters
    get width() {
       return this.#width;
    }
@@ -269,21 +295,28 @@ export class Zone extends Entity {
    set height(height) {
       this.#height = height;
    }
+   get effect() {
+      return this.#effect;
+   }
+   set effect(effect) {
+      this.#effect = effect;
+   }
    get affectedParticles() {
       return this.#affectedParticles;
    }
    set affectedParticles(affectedParticles) {
       this.#affectedParticles = affectedParticles;
    }
+   //#endregion
 
    addToAffectedParticles(newParticle) {
       this.affectedParticles = [...this.affectedParticles, newParticle];
    }
 
-   render() {
-      let element = this.element;
-      element.style.left = `${this.positionVector.x}px`;
-      element.style.top = `${this.positionVector.y}px`;
-      element.style.zIndex = 0;
+   addEffectToParticle(particle) {
+      particle.addEffect(this.effect);
+   }
+   removeEffectFromParticle(particle) {
+      particle.removeEffect(this.effect);
    }
 }
