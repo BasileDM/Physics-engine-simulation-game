@@ -78,6 +78,13 @@ export class Entity {
          newParticle.style.height = this.diameter;
          newParticle.style.borderRadius = "50%";
          newParticle.style.zIndex = "10";
+         if (this.image) {
+            newParticle.style.boxSizing = "content-box";
+            newParticle.style.backgroundImage = `url(${this.image})`;
+            newParticle.style.backgroundSize = `${parseInt(this.diameter)+2}px`;
+            newParticle.style.backgroundColor = "transparent";
+            newParticle.style.border = "none";
+         }
       } else if (this.shape == "Rectangle") {
          newParticle.style.borderRadius = "none";
          newParticle.style.width = `${this.width}px`;

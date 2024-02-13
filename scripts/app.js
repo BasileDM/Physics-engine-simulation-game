@@ -120,6 +120,7 @@ let diameter;
 let elasticity;
 let density;
 let color;
+let image = "";
 function createParticle(event) {
     let mousePositionVector = new Vector (event.clientX, event.clientY);
     let newParticle = new Particle(
@@ -129,7 +130,8 @@ function createParticle(event) {
         diameter,
         elasticity,
         density,
-        color);
+        color,
+        image);
     particles.push(newParticle);
     console.log(newParticle);
     // Mouse push on hover
@@ -354,7 +356,7 @@ effectZonesList.forEach(function (effectZone) {
 //#region Object spawner tool
 let objectsList = [
     {"Name": "Basket Ball", "Diameter": "24px", "Density": 83, "Elasticity":0.8, "Image": "../images/basket-ball.png"},
-    {"Name": "Air ballon", "Diameter": "30px", "Density": 1.28, "Elasticity":0.74, "Image": "../images/rubber-balloon.png"}
+    {"Name": "Balloon", "Diameter": "30px", "Density": 1.28, "Elasticity":0.74, "Image": "../images/rubber-balloon.png"}
 ];
 let objectsListColumn = document.getElementById("objectsList");
 objectsList.forEach(function (object) {
@@ -369,6 +371,7 @@ objectsList.forEach(function (object) {
         diameter = object.Diameter;
         density = object.Density;
         elasticity = object.Elasticity;
+        image = object.Image;
     });
 });
 //#endregion
