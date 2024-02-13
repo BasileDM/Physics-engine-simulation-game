@@ -120,8 +120,13 @@ input[type='range'], input[type="checkbox"] {
     }
 }
 
-#particleTool {
-    visibility: visible;
+#particleTool, #zoneTool, #objectTool, #inspectorTool ,#pusherTool {
+    width: 100%;
+    display: none;
+    flex-direction: row;
+    max-height: 58vh;
+    overflow-y: auto;
+    color: white;
 }
 
 .menuColumn {

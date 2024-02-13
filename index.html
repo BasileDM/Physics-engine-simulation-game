@@ -45,59 +45,97 @@
             <div class="subMenuContainer">
                 <div class="button" id="particleCreatorButton">Particle creator</div>
                 <div class="button" id="zoneCreatorButton">Zones</div>
+                <div class="button" id="objectCreatorButton">Objects</div>
+                <div class="button" id="inspectorToolButton">Inspector</div>
+                <div class="button" id="pusherToolButton">Pusher</div>
             </div>
 
-            <!-- Custom particle creation tool -->
-            <div id="particleTool" class="subMenuContainer">
-                <!-- Variables and sliders-->
-                <div class="menuColumn">
-                    <h2>Custom particle</h2>
-                    <label for="size">Diameter (cm) : </label>
-                    <input type="number" id="size" value="30" min="1" max="970" step="10" onchange="
-                        if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
-                        if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-                        document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(this.value)/2), 3) * (parseFloat(document.getElementById('density').value)/ 1000000)) * 1000) / 1000;
-                    ">
-                    <label for="density">Density (kg/m³) : </label>
-                    <input type="number" id="density" min="0.1" max="22590" value="1000" onchange="
-                        if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
-                        if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
-                        document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById('size').value)/2), 3) * (parseFloat(this.value)/ 1000000))*1000)/1000;
-                    " list="densities">
-                    <datalist id="densities">
-                        <option value="0.18" label="Helium">Helium</option>
-                        <option value="1.225">Air</option>
-                        <option value="575">Chestnut wood</option>
-                        <option value="1000">Water</option>
-                        <option value="7850">Steel</option>
-                        <option value="22590">Osmium</option>
-                    </datalist>
-                    <label for="mass">Mass (kg) : </label>
-                    <input type="number" id="mass" value="14.137" readonly>
-                    <label for="elasticity">Elasticity : </label>
-                    <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
-                    <output>0.50</output>
-                    <div>
-                        <label for="insideColor">Color : </label>
-                        <input type="color" id="insideColor" value="#FF0000">
+            <!-- Creation tools -->
+            <div class="subMenuContainer">
+                <!-- Particle tool -->
+                <div id="particleTool">
+                    <!-- Variables and sliders-->
+                    <div class="menuColumn">
+                        <h2>Custom particle</h2>
+                        <label for="size">Diameter (cm) : </label>
+                        <input type="number" id="size" value="30" min="1" max="970" step="10" onchange="
+                            if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
+                            if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
+                            document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(this.value)/2), 3) * (parseFloat(document.getElementById('density').value)/ 1000000)) * 1000) / 1000;
+                        ">
+                        <label for="density">Density (kg/m³) : </label>
+                        <input type="number" id="density" min="0.1" max="22590" value="1000" onchange="
+                            if (parseInt(this.value) > parseInt(this.max)) this.value = parseInt(this.max);
+                            if (parseInt(this.value) < parseInt(this.min)) this.value = parseInt(this.min);
+                            document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById('size').value)/2), 3) * (parseFloat(this.value)/ 1000000))*1000)/1000;
+                        " list="densities">
+                        <datalist id="densities">
+                            <option value="0.18" label="Helium">Helium</option>
+                            <option value="1.225">Air</option>
+                            <option value="575">Chestnut wood</option>
+                            <option value="1000">Water</option>
+                            <option value="7850">Steel</option>
+                            <option value="22590">Osmium</option>
+                        </datalist>
+                        <label for="mass">Mass (kg) : </label>
+                        <input type="number" id="mass" value="14.137" readonly>
+                        <label for="elasticity">Elasticity : </label>
+                        <input type="range" id="elasticity" value="0.5" min="0" max="1" step="0.01" oninput="this.nextElementSibling.value = this.value;">
+                        <output>0.50</output>
+                        <div>
+                            <label for="insideColor">Color : </label>
+                            <input type="color" id="insideColor" value="#FF0000">
+                        </div>
+                        <div>
+                            <label for="hasGravity">Has gravity : </label>
+                            <input type="checkbox" id="hasGravity" checked>
+                        </div>
+                        <div>
+                            <label for="isMovable">Is movable : </label>
+                            <input type="checkbox" id="isMovable" checked disabled>
+                        </div>
                     </div>
-                    <div>
-                        <label for="hasGravity">Has gravity : </label>
-                        <input type="checkbox" id="hasGravity" checked>
+    
+                    <!-- Materials -->
+                    <div class="menuColumn" id="materialsColumn">
+                        <h2>Density presets</h2>
+                        <!-- Filled with JS loop -->
                     </div>
-                    <div>
-                        <label for="isMovable">Is movable : </label>
-                        <input type="checkbox" id="isMovable" checked disabled>
+    
+                    <div id="particleToolApply" class="button apply">Apply</div>
+                </div>
+                
+                <!-- Zone tool -->
+                <div  id="zoneTool">
+                    <div class="menuColumn" id="densityZonesColumn">
+                        <h2>Density zones</h2>
+                    </div>
+                    <div class="menuColumn" id="effectZonesColumn">
+                        <h2>Effect zones</h2>
+                        <!-- Filled with JS loop -->
                     </div>
                 </div>
 
-                <!-- Materials -->
-                <div class="menuColumn" id="materialsColumn">
-                    <h2>Density presets</h2>
-                    <!-- Filled with JS loop -->
+                <!-- Object tool -->
+                <div  id="objectTool">
+                    <div class="menuColumn">
+                        <p>CCC</p>
+                    </div>
                 </div>
 
-                <div id="particleToolApply" class="button apply">Apply</div>
+                <!-- Inspector tool -->
+                <div  id="inspectorTool">
+                    <div class="menuColumn">
+                        <p>DDDD</p>
+                    </div>
+                </div>
+
+                <!-- Pusher tool -->
+                <div  id="pusherTool">
+                    <div class="menuColumn">
+                        <p>EEE</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal tutorial window -->

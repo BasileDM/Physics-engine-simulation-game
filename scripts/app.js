@@ -11,8 +11,11 @@ let frames = 0;
 export let frameTime = 0; // 1000ms divided by frames per second
 
 let particles = []; // Array of all "Particle" class instances
+
+let playground = document.getElementById("playground");
 let hasDragStarted = false;
 let mouseDragStart = new Vector(0, 0);
+let playgroundTool = null;
 
 // Functions
 //
@@ -95,6 +98,21 @@ function isParticleInZoneArray(currentParticle, checkedParticle) {
     return checkedParticle.affectedParticles.findIndex((element) => element == currentParticle) >= 0;
 }
 
+function changePlaygroundTool(tool) {
+    switch(tool){
+        case null:
+            playground.removeEventListener("mousedown", startDrag);
+            playground.removeEventListener("mouseup", createZone);
+            playground.style.cursor = "crosshair";
+            break;
+        case 'zoneTool': 
+            playground.addEventListener("mousedown", startDrag);
+            playground.addEventListener("mouseup", createZone);
+            playground.style.cursor = "move";
+            break;
+    }
+}
+
 let hasGravity;
 let isMovable;
 let diameter;
@@ -140,6 +158,36 @@ function createZone(event) {
     hasDragStarted = false;
 }
 
+let particleTool = document.getElementById("particleTool");
+let zoneTool = document.getElementById("zoneTool");
+let objectTool = document.getElementById("objectTool");
+let inspectorTool = document.getElementById("inspectorTool");
+let pusherTool = document.getElementById("pusherTool");
+
+
+function displayToolMenu(tool) {
+    particleTool.style.display != "flex" && particleTool == tool ? 
+    particleTool.style.display = "flex" :
+    particleTool.style.display = "none";
+
+    zoneTool.style.display != "flex" && zoneTool == tool ? 
+    zoneTool.style.display = "flex" :
+    zoneTool.style.display = "none";
+
+    objectTool.style.display != "flex" && objectTool == tool ? 
+    objectTool.style.display = "flex" :
+    objectTool.style.display = "none";
+
+    inspectorTool.style.display != "flex" && inspectorTool == tool ? 
+    inspectorTool.style.display = "flex" :
+    inspectorTool.style.display = "none";
+
+    pusherTool.style.display != "flex" && pusherTool == tool ? 
+    pusherTool.style.display = "flex" :
+    pusherTool.style.display = "none";
+
+}
+
 function mainLoop() {
     // Iterating through all the particles to update and render them
     for(let i = 0; i < particles.length; i++) {
@@ -172,9 +220,8 @@ function mainLoop() {
 // // # Main code
 //
 // // Mouse events
-document.getElementById("playground").addEventListener("mousedown", startDrag);
-document.getElementById("playground").addEventListener("mouseup", createZone);
-document.getElementById("playground").addEventListener("wheel", createParticle);
+playground.addEventListener("wheel", createParticle);
+changePlaygroundTool(null);
 
 // // Button events
 // Gravity toggle
@@ -188,15 +235,24 @@ document.getElementById("variablesApplyButton").addEventListener("click", functi
     airDensity =  parseFloat(document.getElementById("airDensity").value) / 1000000;
 })
 
-// // Tools
-// Particle tool
-let particleToolButton = document.getElementById("particleCreatorButton");
-let particleTool = document.getElementById("particleTool");
-particleToolButton.addEventListener("click", function() {
-    particleTool.style.visibility == "hidden" ? 
-    particleTool.style.visibility = "visible" : 
-    particleTool.style.visibility = "hidden";
+// Tools
+document.getElementById("particleCreatorButton").addEventListener("click", function() {
+    displayToolMenu(particleTool);
 })
+document.getElementById("zoneCreatorButton").addEventListener("click", function() {
+    displayToolMenu(zoneTool);
+})
+document.getElementById("objectCreatorButton").addEventListener("click", function() {
+    displayToolMenu(objectTool);
+})
+document.getElementById("inspectorToolButton").addEventListener("click", function() {
+    displayToolMenu(inspectorTool);
+})
+document.getElementById("pusherToolButton").addEventListener("click", function() {
+    displayToolMenu(pusherTool);
+})
+
+// // Particle creator tool
 // Particle properties apply button
 document.getElementById("particleToolApply").addEventListener("click", function() {
     diameter = `${document.getElementById("size").value}px`;
@@ -216,26 +272,60 @@ let materialList = [
     {"Name": "Steel", "Density": 7850, "Color": "#6C6C6C"},
     {"Name": "Osmium", "Density": 22590, "Color": "#9090A3"}
 ];
-let materialsColumn = document.querySelector("#materialsColumn");
 
 // Creating material cards HTML
+let materialsColumn = document.querySelector("#materialsColumn");
+
 materialList.forEach(function (material) {
     materialsColumn.innerHTML +=
-        `<div class="materialContainer" id="${material.Name}" title="${material.Name} &#013; Density : ${material.Density}kg/m³">
-            <div id="material${material.Name}" class="material" alt="${material.Name}" title="${material.Name}" style="background-color: ${material.Color};"></div>
+        `<div class="materialContainer" id="${material.Name}" title="${material.Name} &#013;Density : ${material.Density}kg/m³">
+            <div class="material" alt="${material.Name}" style="background-color: ${material.Color};"></div>
             <p>${material.Name}</p>
         </div>`;
 });
 
-// Adding color and event listeners to each of them
+// Adding event listeners to each of the materials to change input content
 materialList.forEach(function (material) {
     document.getElementById(`${material.Name}`).addEventListener("click", () => {
-        document.getElementById(`material${material.Name}`).style.backgroundColor = `${material.Color}`;
         document.getElementById("density").value = material.Density;
         document.getElementById("insideColor").value = material.Color;
         document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById("size").value)/2), 3) * (parseFloat(material.Density)/ 1000000)) * 1000) / 1000;
     });
 });
+
+// Zone creator tool
+// Effect zones list
+let effectZonesList = [
+    {"Name": "Anti-gravity", "Color": "blue", "Description": "Particles in the zone will no longer be affected by gravity."},
+    {"Name": "Color change", "Color": "red", "Description": "Particles in the zone will change color."}
+];
+// Effect zones list
+// USE MATERIAL LIST
+// Display zones cards
+let densityZonesColumn = document.getElementById("densityZonesColumn");
+materialList.forEach(function (material) {
+    densityZonesColumn.innerHTML +=
+        `<div class="materialContainer" id="zone${material.Name}" title="${material.Name} &#013;Density : ${material.Density}kg/m³ &#013;Makes the density of the air inside the zone the same as the selected material.">
+            <div id="material${material.Name}" class="zoneMaterial" alt="${material.Name}" style="background-color: ${material.Color};"></div>
+            <p>${material.Name}</p>
+        </div>`;
+});
+materialList.forEach(function (material) {
+    document.getElementById(`zone${material.Name}`).addEventListener("click", () => {
+        changePlaygroundTool('zoneTool')
+    });
+});
+let effectZonesColumn = document.getElementById("effectZonesColumn");
+effectZonesList.forEach(function (effectZone) {
+    effectZonesColumn.innerHTML +=
+        `<div class="materialContainer" id="${effectZone.Name}" title="${effectZone.Name} zone : &#013;${effectZone.Description}">
+            <div id="material${effectZone.Name}" class="zoneMaterial" alt="${effectZone.Name}" style="background-color: ${effectZone.Color};"></div>
+            <p>${effectZone.Name}</p>
+        </div>`;
+    
+});
+
+
 
 // Fullscreen button
 let isFullscreen = false;
