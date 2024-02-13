@@ -412,8 +412,8 @@ effectZonesList.forEach(function (effectZone) {
 
 //#region Object spawner tool
 let objectsList = [
-    {"Name": "Basket Ball", "Diameter": "24px", "Density": 83, "Elasticity":0.8, "Image": "../images/basket-ball.png"},
-    {"Name": "Balloon", "Diameter": "30px", "Density": 1.28, "Elasticity":0.74, "Image": "../images/rubber-balloon.png"}
+    {"Name": "Basket Ball", "Diameter": "24px", "Density": 83, "Elasticity":0.8, "Image": "./images/basket-ball.png"},
+    {"Name": "Balloon", "Diameter": "30px", "Density": 1.28, "Elasticity":0.74, "Image": "./images/rubber-balloon.png"}
 ];
 let objectsListColumn = document.getElementById("objectsList");
 objectsList.forEach(function (object) {
