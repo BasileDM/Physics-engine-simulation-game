@@ -288,8 +288,8 @@ export class Zone extends Entity {
    #affectedParticles;
    #effect;
    #isDensityZone;
-   constructor(positionVector, width, height, isDensityZone, effect = "Anti-gravity") {
-      super(positionVector, "Rectangle", false, false, 0.001, "blue");
+   constructor(positionVector, width, height, isDensityZone, effect = "Anti-gravity", color) {
+      super(positionVector, "Rectangle", false, false, 0.001, color);
       this.#width = width;
       this.#height = height;
       this.#effect = effect;

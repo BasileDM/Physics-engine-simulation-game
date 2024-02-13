@@ -15,7 +15,6 @@ let particles = []; // Array of all "Particle" class instances
 let playground = document.getElementById("playground");
 let hasDragStarted = false;
 let mouseDragStart = new Vector(0, 0);
-let playgroundTool = null;
 
 // Functions
 //
@@ -143,6 +142,9 @@ function startDrag(event) {
     mouseDragStart = new Vector(event.clientX, event.clientY);
 }
 
+
+let zoneName;
+let zoneColor;
 function createZone(event) {
     if (hasDragStarted) {
         let mouseDragEnd = new Vector(event.clientX, event.clientY);
@@ -150,7 +152,9 @@ function createZone(event) {
             new Vector (Math.min(mouseDragStart.x, mouseDragEnd.x), Math.min(mouseDragStart.y, mouseDragEnd.y)),
             Math.abs(mouseDragStart.x - mouseDragEnd.x),
             Math.abs(mouseDragStart.y - mouseDragEnd.y),
-            false); // isDensityZone
+            false, // isDensityZone
+            zoneName,
+            zoneColor); // effect
             
         particles.push(newZone);
         console.log(newZone);
@@ -163,8 +167,6 @@ let zoneTool = document.getElementById("zoneTool");
 let objectTool = document.getElementById("objectTool");
 let inspectorTool = document.getElementById("inspectorTool");
 let pusherTool = document.getElementById("pusherTool");
-
-
 function displayToolMenu(tool) {
     particleTool.style.display != "flex" && particleTool == tool ? 
     particleTool.style.display = "flex" :
@@ -293,15 +295,8 @@ materialList.forEach(function (material) {
     });
 });
 
-// Zone creator tool
-// Effect zones list
-let effectZonesList = [
-    {"Name": "Anti-gravity", "Color": "blue", "Description": "Particles in the zone will no longer be affected by gravity."},
-    {"Name": "Color change", "Color": "red", "Description": "Particles in the zone will change color."}
-];
-// Effect zones list
-// USE MATERIAL LIST
-// Display zones cards
+// // Zone creator tool
+// Display density zones cards
 let densityZonesColumn = document.getElementById("densityZonesColumn");
 materialList.forEach(function (material) {
     densityZonesColumn.innerHTML +=
@@ -310,11 +305,19 @@ materialList.forEach(function (material) {
             <p>${material.Name}</p>
         </div>`;
 });
+// Density zones cards event listeners
 materialList.forEach(function (material) {
     document.getElementById(`zone${material.Name}`).addEventListener("click", () => {
         changePlaygroundTool('zoneTool')
     });
 });
+
+// Effect zones list
+let effectZonesList = [
+    {"Name": "Anti-gravity", "Color": "blue", "Description": "Particles in the zone will no longer be affected by gravity."},
+    {"Name": "Color change", "Color": "red", "Description": "Particles in the zone will change color."}
+];
+// Display effect zones cards
 let effectZonesColumn = document.getElementById("effectZonesColumn");
 effectZonesList.forEach(function (effectZone) {
     effectZonesColumn.innerHTML +=
@@ -322,10 +325,17 @@ effectZonesList.forEach(function (effectZone) {
             <div id="material${effectZone.Name}" class="zoneMaterial" alt="${effectZone.Name}" style="background-color: ${effectZone.Color};"></div>
             <p>${effectZone.Name}</p>
         </div>`;
-    
 });
-
-
+// Effect zones cards event listeners
+effectZonesList.forEach(function (effectZone) {
+    document.getElementById(`${effectZone.Name}`).addEventListener("click", () => {
+        zoneName = effectZone.Name;
+        zoneColor = effectZone.Color;
+        changePlaygroundTool('zoneTool');
+        console.log(zoneName);
+        console.log(zoneColor);
+    });
+});
 
 // Fullscreen button
 let isFullscreen = false;
