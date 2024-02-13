@@ -25,6 +25,7 @@ function getCollisionResponse(currentParticle, checkedParticle) {
         if (isParticleInsideZone(currentParticle, checkedParticle) && !isParticleInZoneArray(currentParticle, checkedParticle)) {
             checkedParticle.addToAffectedParticles(currentParticle);
             checkedParticle.addEffectToParticle(currentParticle);
+            currentParticle.element.classList.toggle("underwaterParticle");
             if (checkedParticle.isDensityZone) currentParticle.changeMedium(checkedParticle.density);
 
 
@@ -35,6 +36,7 @@ function getCollisionResponse(currentParticle, checkedParticle) {
             checkedParticle.affectedParticles.splice(currentParticleIndex, 1);
             checkedParticle.removeEffectFromParticle(currentParticle);
             currentParticle.changeMedium(airDensity);
+            currentParticle.element.classList.toggle("underwaterParticle");
         };
     }
     
@@ -102,12 +104,12 @@ function changePlaygroundTool(tool) {
         case null:
             playground.removeEventListener("mousedown", startDrag);
             playground.removeEventListener("mouseup", createZone);
-            playground.style.cursor = "crosshair";
+            playground.style.cursor = "default";
             break;
         case 'zoneTool': 
             playground.addEventListener("mousedown", startDrag);
             playground.addEventListener("mouseup", createZone);
-            playground.style.cursor = "move";
+            playground.style.cursor = "crosshair";
             break;
     }
 }
@@ -143,8 +145,10 @@ function startDrag(event) {
 }
 
 
+let isDensityZone;
 let zoneName;
 let zoneColor;
+let zoneDensity;
 function createZone(event) {
     if (hasDragStarted) {
         let mouseDragEnd = new Vector(event.clientX, event.clientY);
@@ -152,9 +156,10 @@ function createZone(event) {
             new Vector (Math.min(mouseDragStart.x, mouseDragEnd.x), Math.min(mouseDragStart.y, mouseDragEnd.y)),
             Math.abs(mouseDragStart.x - mouseDragEnd.x),
             Math.abs(mouseDragStart.y - mouseDragEnd.y),
-            false, // isDensityZone
-            zoneName,
-            zoneColor); // effect
+            isDensityZone, // isDensityZone
+            zoneName, // effect (name of zone is also name of effect)
+            zoneColor,
+            zoneDensity); // color
             
         particles.push(newZone);
         console.log(newZone);
@@ -240,6 +245,8 @@ document.getElementById("variablesApplyButton").addEventListener("click", functi
 // Tools
 document.getElementById("particleCreatorButton").addEventListener("click", function() {
     displayToolMenu(particleTool);
+    changePlaygroundTool(null);
+    playground.style.cursor = "default"
 })
 document.getElementById("zoneCreatorButton").addEventListener("click", function() {
     displayToolMenu(zoneTool);
@@ -254,7 +261,7 @@ document.getElementById("pusherToolButton").addEventListener("click", function()
     displayToolMenu(pusherTool);
 })
 
-// // Particle creator tool
+//#region Particle creator tool
 // Particle properties apply button
 document.getElementById("particleToolApply").addEventListener("click", function() {
     diameter = `${document.getElementById("size").value}px`;
@@ -265,7 +272,6 @@ document.getElementById("particleToolApply").addEventListener("click", function(
     hasGravity = document.getElementById("hasGravity").checked;
 })
 
-// // Density presets buttons
 let materialList = [
     {"Name": "Helium", "Density": 0.18, "Color": "#A6B7C5"},
     {"Name": "Air", "Density": 1.225, "Color": "#f5f5f5"},
@@ -294,8 +300,9 @@ materialList.forEach(function (material) {
         document.getElementById('mass').value = Math.round(((4/3) * Math.PI * Math.pow((parseInt(document.getElementById("size").value)/2), 3) * (parseFloat(material.Density)/ 1000000)) * 1000) / 1000;
     });
 });
+//#endregion
 
-// // Zone creator tool
+//#region Zone creator tool
 // Display density zones cards
 let densityZonesColumn = document.getElementById("densityZonesColumn");
 materialList.forEach(function (material) {
@@ -305,17 +312,22 @@ materialList.forEach(function (material) {
             <p>${material.Name}</p>
         </div>`;
 });
+
 // Density zones cards event listeners
 materialList.forEach(function (material) {
     document.getElementById(`zone${material.Name}`).addEventListener("click", () => {
+        zoneName = `DensityZone`;
+        zoneColor = material.Color;
+        isDensityZone = true;
+        zoneDensity = material.Density / 1000000;
         changePlaygroundTool('zoneTool')
     });
 });
 
 // Effect zones list
 let effectZonesList = [
-    {"Name": "Anti-gravity", "Color": "blue", "Description": "Particles in the zone will no longer be affected by gravity."},
-    {"Name": "Color change", "Color": "red", "Description": "Particles in the zone will change color."}
+    {"Name": "Anti-gravity", "Color": "blue", "isDensityZone": false, "Description": "Particles in the zone will no longer be affected by gravity."},
+    {"Name": "Color change", "Color": "red", "isDensityZone": false, "Description": "Particles in the zone will change color."}
 ];
 // Display effect zones cards
 let effectZonesColumn = document.getElementById("effectZonesColumn");
@@ -331,11 +343,35 @@ effectZonesList.forEach(function (effectZone) {
     document.getElementById(`${effectZone.Name}`).addEventListener("click", () => {
         zoneName = effectZone.Name;
         zoneColor = effectZone.Color;
+        isDensityZone = false;
         changePlaygroundTool('zoneTool');
         console.log(zoneName);
         console.log(zoneColor);
     });
 });
+//#endregion
+
+//#region Object spawner tool
+let objectsList = [
+    {"Name": "Basket Ball", "Diameter": "24px", "Density": 83, "Elasticity":0.8, "Image": "../images/basket-ball.png"},
+    {"Name": "Air ballon", "Diameter": "30px", "Density": 1.28, "Elasticity":0.74, "Image": "../images/rubber-balloon.png"}
+];
+let objectsListColumn = document.getElementById("objectsList");
+objectsList.forEach(function (object) {
+    objectsListColumn.innerHTML +=
+        `<div class="materialContainer" id="${object.Name}" title="${object.Name} &#013;Density : ${object.Density}kg/m³ &#013;">
+            <div id="material${object.Name}" class="material objectsMaterial" alt="${object.Name}" style="background-image: url('${object.Image}'); background-size: 40px;"></div>
+            <p>${object.Name}</p>
+        </div>`;
+});
+objectsList.forEach(function (object) {
+    document.getElementById(`${object.Name}`).addEventListener("click", () => {
+        diameter = object.Diameter;
+        density = object.Density;
+        elasticity = object.Elasticity;
+    });
+});
+//#endregion
 
 // Fullscreen button
 let isFullscreen = false;
@@ -362,6 +398,7 @@ document.getElementById("clearPlayground").addEventListener("click", function() 
 
 // Modal window for tutorial
 const dialog = document.querySelector("dialog");
+dialog.showModal()
 document.querySelector("#tutorial").addEventListener("click", () => {dialog.showModal()});
 document.querySelector("dialog button").addEventListener("click", () => {dialog.close()});
 

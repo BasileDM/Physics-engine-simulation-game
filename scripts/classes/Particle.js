@@ -82,7 +82,10 @@ export class Entity {
          newParticle.style.borderRadius = "none";
          newParticle.style.width = `${this.width}px`;
          newParticle.style.height = `${this.height}px`;
-         newParticle.style.zIndex = 0;
+         if (this.isDensityZone == true) {
+            newParticle.style.zIndex = 1;
+            newParticle.style.opacity = "70%";
+         }
       } else {
          console.warn("Shape is undefined.");
       }
@@ -109,6 +112,7 @@ export class Particle extends Entity {
    #mass;
    #effectList;
    #currentMediumDensity;
+   #image;
    constructor(
       positionVector, 
       hasGravity, 
@@ -116,7 +120,8 @@ export class Particle extends Entity {
       diameter = "30px", 
       elasticity = 0.5, 
       density, 
-      color
+      color,
+      image
    ){
       super(positionVector, "Sphere", hasGravity, isMovable, density, color)
       this.acceleration = new Vector(0, 0);
@@ -143,6 +148,7 @@ export class Particle extends Entity {
       this.#effectList = {
          "Anti-gravity": 0
       };
+      this.#image = image;
 
       this.spawn();
       this.render();
@@ -184,6 +190,12 @@ export class Particle extends Entity {
    }
    set currentMediumDensity(density) {
       this.#currentMediumDensity = density;
+   }
+   get image() {
+      return this.#image;
+   }
+   set image(image) {
+      this.#image = image;
    }
    //#endregion
 
@@ -288,8 +300,8 @@ export class Zone extends Entity {
    #affectedParticles;
    #effect;
    #isDensityZone;
-   constructor(positionVector, width, height, isDensityZone, effect = "Anti-gravity", color) {
-      super(positionVector, "Rectangle", false, false, 0.001, color);
+   constructor(positionVector, width, height, isDensityZone, effect = "Anti-gravity", color, density) {
+      super(positionVector, "Rectangle", false, false, density, color);
       this.#width = width;
       this.#height = height;
       this.#effect = effect;

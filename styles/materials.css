@@ -27,3 +27,7 @@
 .zoneMaterial {
     border-radius: 0%;
 }
+
+.objectsMaterial {
+    border: none;
+}

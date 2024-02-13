@@ -16,6 +16,10 @@ input[type='range'], input[type="checkbox"] {
     cursor: pointer;
 }
 
+/* .underwaterParticle {
+    filter: hue-rotate(180deg);
+} */
+
 /* #region Playground, walls, scale */
 #playground {
     position: relative;
