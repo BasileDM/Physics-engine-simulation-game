@@ -99,6 +99,57 @@ function isParticleInZoneArray(currentParticle, checkedParticle) {
     return checkedParticle.affectedParticles.findIndex((element) => element == currentParticle) >= 0;
 }
 
+let activeMouseTool = null;
+function changeMouseTool(tool) {
+    activeMouseTool = tool;
+    if (activeMouseTool == pusherTool) {
+        playground.style.cursor = "grabbing";
+    } else if (activeMouseTool == inspectorTool) {
+        playground.style.cursor = "zoom-in";
+    } else {
+        playground.style.cursor = "default";
+    }
+}
+
+function pushParticle(particle){
+    if (activeMouseTool == pusherTool) {
+        let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
+        particle.velocity = randomVelocity;
+    }
+}
+function inspectParticle(particle) {
+    console.log(particle);
+    let inspectorHTML = `
+        <h2>Particle Info</h2>
+        <ul>
+            <li>Mass : ${particle.mass} kg</li>
+            <li>Density : ${particle.density} kg / m3</li>
+            <li>Density in kg/cm3 : ${particle.densityInKgPerCm3}</li>
+            <li>Current medium density : ${particle.currentMediumDensity}</li>
+            <li>Elasticity : ${particle.elasticity}</li>
+        </ul>
+        <ul>
+            <li>Radius : ${particle.radius} cm</li>
+            <li>Diameter : ${parseInt(particle.diameter)} cm</li>
+            <li>Area : ${particle.area} cm²</li>
+            <li>Volume : ${particle.volume} cm3</li>
+        </ul>
+        <ul>
+            <li>Drag coefficient : ${particle.dragCoef}</li>
+            <li>Drag force : ${particle.dragForce}</li>
+            <li>Buoyant force : 
+                <br>x: ${gravity.scale(particle.volume*particle.currentMediumDensity).x}
+                <br>y: ${gravity.scale(particle.volume*particle.currentMediumDensity).y}
+            </li>
+        </ul>
+        <ul>
+            <li>Acceleration : <br>x: ${particle.acceleration.x}<br> y: ${particle.acceleration.y}</li>
+            <li>Velocity : <br>x: ${particle.velocity.x} <br>y: ${particle.velocity.y}</li>
+        </ul>
+    `;
+    document.getElementById("inspectorInfo").innerHTML = inspectorHTML;
+}
+
 function changePlaygroundTool(tool) {
     switch(tool){
         case null:
@@ -135,9 +186,10 @@ function createParticle(event) {
     particles.push(newParticle);
     console.log(newParticle);
     // Mouse push on hover
-    newParticle.element.addEventListener("mouseenter", function(){
-        let randomVelocity = new Vector((Math.random()-0.5)*2, Math.random()*-2);
-        newParticle.velocity = randomVelocity;
+    newParticle.element.addEventListener("mouseenter", function() {
+        if (activeMouseTool != null) {
+            activeMouseTool == pusherTool ? pushParticle(newParticle) : inspectParticle(newParticle);
+        }
     });
 }
 
@@ -246,21 +298,26 @@ document.getElementById("variablesApplyButton").addEventListener("click", functi
 
 // Tools
 document.getElementById("particleCreatorButton").addEventListener("click", function() {
-    displayToolMenu(particleTool);
+    changeMouseTool(null);
     changePlaygroundTool(null);
+    displayToolMenu(particleTool);
     playground.style.cursor = "default"
 })
 document.getElementById("zoneCreatorButton").addEventListener("click", function() {
+    changeMouseTool(null);
     displayToolMenu(zoneTool);
 })
 document.getElementById("objectCreatorButton").addEventListener("click", function() {
+    changeMouseTool(null);
     displayToolMenu(objectTool);
 })
 document.getElementById("inspectorToolButton").addEventListener("click", function() {
     displayToolMenu(inspectorTool);
+    changeMouseTool(inspectorTool);
 })
 document.getElementById("pusherToolButton").addEventListener("click", function() {
     displayToolMenu(pusherTool);
+    changeMouseTool(pusherTool);
 })
 
 //#region Particle creator tool

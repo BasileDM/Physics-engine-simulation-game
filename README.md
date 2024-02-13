@@ -6,9 +6,7 @@ Constraints : No libraries / No HTML canvas
 
 Work in progress.
 
-- Scroll wheel to spawn balls
-- Click and drag to make an anti-gravity zone 
-- Hover over balls to give them an upwards push
-- Get info about particles with F12 console
+- Use the scroll wheel to spawn particles
+- Use the pusher tool to push particles around
 
 Play live here : https://basiledm.github.io/Physics-engine-simulation-game/
