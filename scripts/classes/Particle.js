@@ -81,7 +81,7 @@ export class Entity {
          if (this.image) {
             newParticle.style.boxSizing = "content-box";
             newParticle.style.backgroundImage = `url(${this.image})`;
-            newParticle.style.backgroundSize = `${parseInt(this.diameter)+2}px`;
+            newParticle.style.backgroundSize = `107%`;
             newParticle.style.backgroundColor = "transparent";
             newParticle.style.border = "none";
          }

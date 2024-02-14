@@ -332,12 +332,15 @@ document.getElementById("particleToolApply").addEventListener("click", function(
 })
 
 let materialList = [
-    {"Name": "Helium", "Density": 0.18, "Color": "#A6B7C5"},
-    {"Name": "Air", "Density": 1.225, "Color": "#f5f5f5"},
-    {"Name": "Chestnut wood", "Density": 575, "Color": "#CDAC79"},
-    {"Name": "Water", "Density": 1000, "Color": "#6495ed"},
+    {"Name": "Osmium", "Density": 22590, "Color": "#9090A3"},
+    {"Name": "Lead", "Density": 11400, "Color": "#2e2e2d"},
     {"Name": "Steel", "Density": 7850, "Color": "#6C6C6C"},
-    {"Name": "Osmium", "Density": 22590, "Color": "#9090A3"}
+    {"Name": "Water", "Density": 1000, "Color": "#6495ed"},
+    {"Name": "Chestnut wood", "Density": 575, "Color": "#CDAC79"},
+    {"Name": "Cork", "Density": 180, "Color": "#997751"},
+    {"Name": "EPS Polystyrene", "Density": 15, "Color": "#ffffff"},
+    {"Name": "Air", "Density": 1.225, "Color": "#f5f5f5"},
+    {"Name": "Helium", "Density": 0.18, "Color": "#A6B7C5"}
 ];
 
 // Creating material cards HTML
@@ -385,8 +388,7 @@ materialList.forEach(function (material) {
 
 // Effect zones list
 let effectZonesList = [
-    {"Name": "Anti-gravity", "Color": "blue", "isDensityZone": false, "Description": "Particles in the zone will no longer be affected by gravity."},
-    {"Name": "Color change", "Color": "red", "isDensityZone": false, "Description": "Particles in the zone will change color."}
+    {"Name": "Anti-gravity", "Color": "blue", "isDensityZone": false, "Description": "Particles in the zone will no longer be affected by gravity."}
 ];
 // Display effect zones cards
 let effectZonesColumn = document.getElementById("effectZonesColumn");

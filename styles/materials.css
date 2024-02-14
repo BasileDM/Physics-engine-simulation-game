@@ -32,3 +32,8 @@
 .objectsMaterial {
     border: none;
 }
+
+#materialsColumn {
+    max-height: 50svh;
+    overflow-y: scroll;
+}
