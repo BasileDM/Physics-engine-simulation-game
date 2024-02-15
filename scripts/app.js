@@ -329,6 +329,7 @@ document.getElementById("particleToolApply").addEventListener("click", function(
     color = document.getElementById("insideColor").value;
     isMovable = document.getElementById("isMovable").checked;
     hasGravity = document.getElementById("hasGravity").checked;
+    image = "";
 })
 
 let materialList = [
